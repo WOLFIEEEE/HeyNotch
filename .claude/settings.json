@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(gh pr create --repo TheBoredTeam*)",
+      "Bash(gh pr create -R TheBoredTeam*)",
+      "Bash(gh * --repo TheBoredTeam*)",
+      "Bash(gh * -R TheBoredTeam*)",
+      "Bash(gh * TheBoredTeam/boring.notch*)",
+      "Bash(git remote add * *TheBoredTeam*)",
+      "Bash(git push *TheBoredTeam*)"
+    ]
+  }
+}

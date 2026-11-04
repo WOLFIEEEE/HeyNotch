@@ -12,7 +12,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        SPARKLE_METADATA_PATH="boringNotch.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+        SPARKLE_METADATA_PATH="HeyNotch.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
         SPARKLE_EXTRACT_DIR="$RUNNER_TEMP/sparkle-release"
         SPARKLE_REPO_URL="https://github.com/sparkle-project/Sparkle"
 

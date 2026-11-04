@@ -37,8 +37,8 @@ jobs:
     permissions:
       contents: read
     env:
-      PROJECT_NAME: boringNotch
-      APP_NAME: Boring Notch
+      PROJECT_NAME: HeyNotch
+      APP_NAME: HeyNotch
       EXPORT_METHOD: development
       VERSION_INPUT: ${{ inputs.version }}
       BUILD_NUMBER_INPUT: ${{ inputs.build_number }}

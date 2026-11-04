@@ -17,19 +17,19 @@ from extract_build_number import extract_build_number  # noqa: E402
 PROJECT = """
 buildSettings = {
     CURRENT_PROJECT_VERSION = 272;
-    PRODUCT_BUNDLE_IDENTIFIER = theboringteam.boringnotch;
+    PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch;
 };
 buildSettings = {
     CURRENT_PROJECT_VERSION = 272;
-    PRODUCT_BUNDLE_IDENTIFIER = theboringteam.boringnotch;
+    PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch;
 };
 buildSettings = {
     CURRENT_PROJECT_VERSION = 900;
-    PRODUCT_BUNDLE_IDENTIFIER = theboringteam.boringnotch.BoringNotchXPCHelper;
+    PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.HeyNotchXPCHelper;
 };
 buildSettings = {
     CURRENT_PROJECT_VERSION = 1;
-    PRODUCT_BUNDLE_IDENTIFIER = com.qareai.boringNotchTests;
+    PRODUCT_BUNDLE_IDENTIFIER = com.qareai.HeyNotchTests;
 };
 """
 
@@ -37,7 +37,7 @@ buildSettings = {
 class ExtractBuildNumberTests(unittest.TestCase):
     def test_extracts_the_app_target_build(self) -> None:
         self.assertEqual(
-            extract_build_number(PROJECT, "theboringteam.boringnotch"),
+            extract_build_number(PROJECT, "com.wolfieeee.heynotch"),
             "272",
         )
 
@@ -48,7 +48,7 @@ class ExtractBuildNumberTests(unittest.TestCase):
             1,
         )
         with self.assertRaisesRegex(ValueError, "disagree"):
-            extract_build_number(disagreeing, "theboringteam.boringnotch")
+            extract_build_number(disagreeing, "com.wolfieeee.heynotch")
 
         with self.assertRaisesRegex(ValueError, "No build settings"):
             extract_build_number(PROJECT, "missing.bundle")
@@ -58,7 +58,7 @@ class ExtractBuildNumberTests(unittest.TestCase):
             "CURRENT_PROJECT_VERSION = beta;",
         )
         with self.assertRaisesRegex(ValueError, "positive integer"):
-            extract_build_number(non_integer, "theboringteam.boringnotch")
+            extract_build_number(non_integer, "com.wolfieeee.heynotch")
 
 
 if __name__ == "__main__":

@@ -68,9 +68,9 @@ jobs:
       run: |
         xcodebuild \
           -resolvePackageDependencies \
-          -project boringNotch.xcodeproj \
-          -scheme boringNotch \
-          -clonedSourcePackagesDirPath "$RUNNER_TEMP/boringNotch-source-packages" \
+          -project HeyNotch.xcodeproj \
+          -scheme HeyNotch \
+          -clonedSourcePackagesDirPath "$RUNNER_TEMP/HeyNotch-source-packages" \
           -onlyUsePackageVersionsFromResolvedFile
 
     # Add any setup steps before running the `github/codeql-action/init` action.
@@ -92,18 +92,18 @@ jobs:
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
 
-    - name: Build Boring Notch
+    - name: Build HeyNotch
       if: matrix.language == 'swift'
       run: |
         set -o pipefail
 
         xcodebuild \
-          -project boringNotch.xcodeproj \
-          -scheme boringNotch \
+          -project HeyNotch.xcodeproj \
+          -scheme HeyNotch \
           -configuration Release \
           -destination "platform=macOS" \
-          -derivedDataPath "$RUNNER_TEMP/boringNotch-derived-data" \
-          -clonedSourcePackagesDirPath "$RUNNER_TEMP/boringNotch-source-packages" \
+          -derivedDataPath "$RUNNER_TEMP/HeyNotch-derived-data" \
+          -clonedSourcePackagesDirPath "$RUNNER_TEMP/HeyNotch-source-packages" \
           -onlyUsePackageVersionsFromResolvedFile \
           ONLY_ACTIVE_ARCH=YES \
           CODE_SIGNING_ALLOWED=NO \

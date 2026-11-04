@@ -75,11 +75,11 @@ jobs:
           SOURCE_PROJECT="$RUNNER_TEMP/source-project.pbxproj"
           gh api \
             -H "Accept: application/vnd.github.raw+json" \
-            "repos/${REPO}/contents/boringNotch.xcodeproj/project.pbxproj?ref=${SOURCE_SHA}" \
+            "repos/${REPO}/contents/HeyNotch.xcodeproj/project.pbxproj?ref=${SOURCE_SHA}" \
             > "$SOURCE_PROJECT"
           SOURCE_BUILD="$(python3 .github/scripts/extract_build_number.py \
             --pbxproj "$SOURCE_PROJECT" \
-            --bundle-identifier theboringteam.boringnotch)"
+            --bundle-identifier com.wolfieeee.heynotch)"
           BUILD_NUMBER="${SOURCE_BUILD}.${RUN_NUMBER}.${RUN_ATTEMPT}"
           echo "source_sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
           echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"

@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   build:
-    name: Build Boring Notch
+    name: Build HeyNotch
     strategy:
       matrix:
         platform:
@@ -27,7 +27,7 @@ jobs:
         xcode:
           - ^16
         scheme:
-          - boringNotch
+          - HeyNotch
     # macos-latest now resolves to macos-26, which does not ship Xcode 16.
     # Keep this legacy main-branch build on an image with the requested toolchain.
     runs-on: macos-15
