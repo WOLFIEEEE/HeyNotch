@@ -43,7 +43,7 @@ struct HeyExtrasMenu : View {
     var github: some View {
         HeyLargeButtons(
             action: {
-                if let url = URL(string: "https://github.com/WOLFIEEEE/boring.notch---Personalizaton") {
+                if let url = URL(string: "https://github.com/WOLFIEEEE/HeyNotch") {
                     NSWorkspace.shared.open(url)
                 }
             },

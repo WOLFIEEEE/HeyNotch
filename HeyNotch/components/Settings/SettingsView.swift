@@ -870,7 +870,7 @@ struct About: View {
                 HStack(spacing: 30) {
                     Spacer(minLength: 0)
                     Button {
-                        if let url = URL(string: "https://github.com/WOLFIEEEE/boring.notch---Personalizaton") {
+                        if let url = URL(string: "https://github.com/WOLFIEEEE/HeyNotch") {
                             NSWorkspace.shared.open(url)
                         }
                     } label: {

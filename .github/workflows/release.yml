@@ -277,7 +277,7 @@ jobs:
         with:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          repositories: boring.notch---Personalizaton
+          repositories: HeyNotch
           permission-contents: write
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -325,8 +325,8 @@ jobs:
           fi
           printf '%s' "$SPARKLE_PRIVATE_KEY" | "$RUNNER_TEMP/generate_appcast" \
             --ed-key-file - \
-            --link "https://github.com/WOLFIEEEE/boring.notch---Personalizaton/releases" \
-            --download-url-prefix "https://github.com/WOLFIEEEE/boring.notch---Personalizaton/releases/download/v${VERSION}/" \
+            --link "https://github.com/WOLFIEEEE/HeyNotch/releases" \
+            --download-url-prefix "https://github.com/WOLFIEEEE/HeyNotch/releases/download/v${VERSION}/" \
             --embed-release-notes \
             "${CHANNEL_ARGS[@]}" \
             -o "$APPCAST_OUT" \
@@ -373,7 +373,7 @@ jobs:
         with:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          repositories: boring.notch---Personalizaton
+          repositories: HeyNotch
           permission-contents: write
 
       - name: Merge release PR
@@ -431,7 +431,7 @@ jobs:
         with:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          repositories: boring.notch---Personalizaton
+          repositories: HeyNotch
           permission-contents: write
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -506,7 +506,7 @@ jobs:
         with:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          repositories: boring.notch---Personalizaton
+          repositories: HeyNotch
           permission-contents: write
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -580,7 +580,7 @@ jobs:
       - name: Generate cask files
         run: |
           set -euo pipefail
-          DMG_URL="https://github.com/WOLFIEEEE/boring.notch---Personalizaton/releases/download/v${VERSION}/${PROJECT_NAME}.dmg"
+          DMG_URL="https://github.com/WOLFIEEEE/HeyNotch/releases/download/v${VERSION}/${PROJECT_NAME}.dmg"
 
           # Retry SHA calculation (release may need a moment to propagate)
           for attempt in 1 2 3; do
@@ -598,7 +598,7 @@ jobs:
             url "${DMG_URL}"
             name "${DISPLAY_NAME}"
             desc "${DESC}"
-            homepage "https://github.com/WOLFIEEEE/boring.notch---Personalizaton"
+            homepage "https://github.com/WOLFIEEEE/HeyNotch"
             livecheck do
               url :url
               strategy :github_latest

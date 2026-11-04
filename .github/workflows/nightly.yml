@@ -151,7 +151,7 @@ jobs:
         with:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          repositories: boring.notch---Personalizaton
+          repositories: HeyNotch
           permission-contents: write
 
       - name: Checkout nightly source
@@ -185,7 +185,7 @@ jobs:
           cat > "Release/${ASSET_NAME%.dmg}.html" <<HTML
           <h2>Nightly ${BRANCH_NAME}</h2>
           <p>Commit: <code>${SOURCE_SHA}</code></p>
-          <p>Source: <a href="https://github.com/WOLFIEEEE/boring.notch---Personalizaton/commit/${SOURCE_SHA}">View commit</a></p>
+          <p>Source: <a href="https://github.com/WOLFIEEEE/HeyNotch/commit/${SOURCE_SHA}">View commit</a></p>
           HTML
 
       - name: Fetch Sparkle generate_appcast
@@ -220,8 +220,8 @@ jobs:
           rm -f "$APPCAST_OUTPUT"
           printf '%s' "$SPARKLE_PRIVATE_KEY" | "$RUNNER_TEMP/generate_appcast" \
             --ed-key-file - \
-            --link "https://github.com/WOLFIEEEE/boring.notch---Personalizaton/commits/${BRANCH_NAME}" \
-            --download-url-prefix "https://github.com/WOLFIEEEE/boring.notch---Personalizaton/releases/download/${TAG}/" \
+            --link "https://github.com/WOLFIEEEE/HeyNotch/commits/${BRANCH_NAME}" \
+            --download-url-prefix "https://github.com/WOLFIEEEE/HeyNotch/releases/download/${TAG}/" \
             --embed-release-notes \
             --channel "${BRANCH_NAME}" \
             -o "$APPCAST_OUTPUT" \

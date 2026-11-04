@@ -46,7 +46,7 @@ class WorkflowSmokeTests(unittest.TestCase):
         # TAG is pinned to `nightly` below, so this prefix always resolves to
         # .../releases/download/nightly/.
         self.assertIn(
-            "https://github.com/WOLFIEEEE/boring.notch---Personalizaton/releases/download/${TAG}/",
+            "https://github.com/WOLFIEEEE/HeyNotch/releases/download/${TAG}/",
             self.nightly,
         )
         self.assertIn("TAG: nightly", self.nightly)

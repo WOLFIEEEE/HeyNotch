@@ -31,8 +31,8 @@ Everything inherited from Boring Notch:
 ## Build from source
 
 ```bash
-git clone https://github.com/WOLFIEEEE/boring.notch---Personalizaton.git
-cd boring.notch---Personalizaton
+git clone https://github.com/WOLFIEEEE/HeyNotch.git
+cd HeyNotch
 open HeyNotch.xcodeproj
 ```
 
