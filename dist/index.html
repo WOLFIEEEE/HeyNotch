@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9fe">
+  <title>HeyNotch — A little more Mac.</title>
+  <meta name="description" content="A little workspace in your Mac's notch. Keep tasks, music, dictation, meeting transcripts and scoped AI-agent access close at hand. An independent open-source macOS app.">
+  <link rel="canonical" href="https://heynotch.remotemars.chatgpt.site/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="HeyNotch">
+  <meta property="og:title" content="HeyNotch — A little more Mac.">
+  <meta property="og:description" content="Your tasks, music, words, and meetings. Right where your Mac leaves a little room.">
+  <meta property="og:url" content="https://heynotch.remotemars.chatgpt.site/">
+  <meta property="og:image" content="https://heynotch.remotemars.chatgpt.site/social.svg">
+  <meta property="og:image:alt" content="HeyNotch. A little more Mac. A blue desktop with an expanded task notch.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14m-6-6 6 6 6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-tasks" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 17V5l11-2v12M9 8l11-2"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="16" rx="3" ry="2"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 10v4m4-7v10m4-14v18m4-14v10m4-7v4"/></symbol>
+    <symbol id="i-agent" viewBox="0 0 24 24"><path d="M9 9H6a3 3 0 1 1 3-3v12a3 3 0 1 1-3-3h12a3 3 0 1 1-3 3V6a3 3 0 1 1 3 3H9Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-skip" viewBox="0 0 24 24"><path d="m5 6 9 6-9 6Zm12 0v12"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></symbol>
+  </defs></svg>
+
+  <header class="site-header wrap">
+    <a class="brand" href="#" aria-label="HeyNotch home"><span class="brand-mark" aria-hidden="true"><i></i></span>HeyNotch<span class="brand-period">.</span></a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-navigation" aria-label="Open navigation"><span></span><span></span></button>
+    <nav id="site-navigation" class="site-navigation" aria-label="Main navigation">
+      <a href="#features">The little things</a><a href="#control">Your control</a><a href="#questions">Questions</a>
+      <a class="nav-source" href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Source <span aria-hidden="true">↗</span></a>
+      <a class="button button-small" href="#get-started" data-get>Get HeyNotch <svg class="icon"><use href="#i-arrow"/></svg></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy wrap">
+        <p class="eyebrow"><span class="little-notch" aria-hidden="true"></span> A little workspace. Right up there.</p>
+        <h1 id="hero-title">A little more <span>Mac.</span></h1>
+        <p class="hero-description">Your tasks, music, words, and meetings.<br>Right where your Mac leaves a little room.</p>
+        <div class="hero-actions"><a class="button" href="#get-started" data-get>Get HeyNotch <svg class="icon"><use href="#i-arrow"/></svg></a><a class="text-link" href="#demo">Take a little look <svg class="icon"><use href="#i-down"/></svg></a></div>
+        <p class="hero-note">Independent. Open source. Made for macOS.</p>
+      </div>
+
+      <div id="demo" class="demo-section">
+        <div class="demo-tabs" role="tablist" aria-label="Explore the HeyNotch preview">
+          <button id="tab-tasks" role="tab" aria-selected="true" aria-controls="panel-tasks" data-tab="tasks" disabled><svg class="icon"><use href="#i-tasks"/></svg>Tasks</button>
+          <button id="tab-music" role="tab" aria-selected="false" aria-controls="panel-music" data-tab="music" tabindex="-1" disabled><svg class="icon"><use href="#i-music"/></svg>Music</button>
+          <button id="tab-meetings" role="tab" aria-selected="false" aria-controls="panel-meetings" data-tab="meetings" tabindex="-1" disabled><svg class="icon"><use href="#i-wave"/></svg>Meetings</button>
+          <button id="tab-agent" role="tab" aria-selected="false" aria-controls="panel-agent" data-tab="agent" tabindex="-1" disabled><svg class="icon"><use href="#i-agent"/></svg>Agents</button>
+        </div>
+        <div class="scene-stage" id="scene-stage">
+          <div class="scene-halo" aria-hidden="true"></div>
+          <div class="laptop" id="laptop">
+            <div class="laptop-lid">
+              <div class="screen">
+                <div class="wallpaper" aria-hidden="true"><div class="wallpaper-fold fold-one"></div><div class="wallpaper-fold fold-two"></div><div class="wallpaper-fold fold-three"></div></div>
+                <div class="desktop-menu" aria-hidden="true"><span class="desktop-menu-left"><b>◈</b><strong>Finder</strong><span>File</span><span>Edit</span><span>View</span></span><span>◒ &nbsp; ◉ &nbsp; Thu 9:41</span></div>
+                <div class="desktop-note" aria-hidden="true"><div class="window-dots"><i></i><i></i><i></i></div><span class="note-eyebrow">A NOTE TO SELF</span><p>Make room<br>for a good idea.</p><span class="note-rule"></span><small>The little things add up.</small></div>
+                <div class="desktop-dock" aria-hidden="true"><i class="dock-finder">↔</i><i class="dock-notes">≡</i><i class="dock-calendar">5</i><i class="dock-music">♪</i><i class="dock-notch"><span></span></i><i class="dock-terminal">›_</i></div>
+
+                <div class="notch-app" aria-label="Interactive HeyNotch sample workspace">
+                  <div class="notch-toolbar"><span><span class="notch-mini-mark" aria-hidden="true"></span>HeyNotch</span><span class="screen-demo-label">BROWSER PREVIEW</span></div>
+                  <div id="panel-tasks" class="demo-panel" role="tabpanel" aria-labelledby="tab-tasks" tabindex="0">
+                    <div class="panel-heading"><h2>Your next little thing.</h2><span class="screen-list">Work <span aria-hidden="true">⌄</span></span></div>
+                    <div class="kanban" id="demo-board">
+                      <section class="kanban-lane" data-column="todo"><h3><i></i>To do <span data-count="todo">2</span></h3><div class="lane-tasks" role="list"><div role="listitem"><button class="demo-task" disabled>Sketch the next idea<span>Work</span></button></div><div role="listitem"><button class="demo-task" disabled>Send the draft<span>Work</span></button></div></div></section>
+                      <section class="kanban-lane" data-column="doing"><h3><i></i>Doing <span data-count="doing">1</span></h3><div class="lane-tasks" role="list"><div role="listitem"><button class="demo-task" disabled>Bring it to life<span>On this Mac</span></button></div></div></section>
+                      <section class="kanban-lane" data-column="done"><h3><i></i>Done <span data-count="done">1</span></h3><div class="lane-tasks" role="list"><div role="listitem"><button class="demo-task" disabled>Find a good starting point<span>Completed</span></button></div></div></section>
+                    </div>
+                    <p class="screen-footnote">Click a task to move it along. <span>Sample tasks only.</span></p>
+                  </div>
+
+                  <div id="panel-music" class="demo-panel" role="tabpanel" aria-labelledby="tab-music" tabindex="0" hidden>
+                    <div class="music-content"><div class="album-art" aria-hidden="true"><span>STILL<br>HERE.</span><i></i><small>A LITTLE FOCUS</small></div><div class="music-details"><span class="screen-kicker">A MOMENT TO YOURSELF</span><h2>A quieter kind<br>of focus.</h2><p>Sample artwork · Silent preview</p><div class="music-controls"><svg class="icon previous" aria-hidden="true"><use href="#i-skip"/></svg><button id="music-toggle" class="play-button" aria-label="Play the silent music preview" aria-pressed="false" disabled><svg class="icon"><use href="#i-play"/></svg></button><svg class="icon" aria-hidden="true"><use href="#i-skip"/></svg><div class="music-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div><div class="music-progress" aria-hidden="true"><span></span></div></div></div>
+                    <p class="screen-footnote">Your music controls, a little closer. <span>This preview plays no audio.</span></p>
+                  </div>
+
+                  <div id="panel-meetings" class="demo-panel" role="tabpanel" aria-labelledby="tab-meetings" tabindex="0" hidden>
+                    <div class="panel-heading"><h2>Keep the conversation.</h2><span class="sample-chip">Sample meeting</span></div>
+                    <div class="meeting-preview" id="meeting-preview"><div class="audio-sources"><span><i class="voice-dot"></i>Your voice</span><span><i class="voice-dot other"></i>Call audio</span></div><div class="sample-lines" id="sample-lines" hidden><p><span>You <time>00:12</time></span>Let’s give the idea a little room to breathe.</p><p><span>Call audio <time>00:17</time></span>I’ll bring a first draft to our next catch-up.</p></div><div id="meeting-placeholder" class="meeting-placeholder"><svg class="icon"><use href="#i-wave"/></svg><p>Two sides of the call.<br>A place to keep the details.</p></div></div>
+                    <div class="screen-footer-row"><button class="screen-button" id="meeting-toggle" aria-expanded="false" aria-controls="sample-lines" disabled>Show sample transcript <svg class="icon"><use href="#i-arrow"/></svg></button><span>Preview only. No recording.</span></div>
+                  </div>
+
+                  <div id="panel-agent" class="demo-panel" role="tabpanel" aria-labelledby="tab-agent" tabindex="0" hidden>
+                    <div class="panel-heading"><h2>A little help with the list.</h2><span class="sample-chip">Sample connection</span></div>
+                    <div class="agent-prompt"><span class="prompt-person"><svg class="icon"><use href="#i-agent"/></svg>You, to your agent</span><p>“Add a task to review the proposal<br class="desktop-only"> in my Work list.”</p><span class="scope-badge"><svg class="icon"><use href="#i-lock"/></svg>Work list · Read and write</span></div>
+                    <div class="screen-footer-row"><button class="screen-button" id="agent-run" disabled>Try this command <svg class="icon"><use href="#i-arrow"/></svg></button><span id="agent-result">Creates a browser sample only.</span></div>
+                  </div>
+                </div>
+              </div>
+              <span class="lid-reflection" aria-hidden="true"></span>
+            </div>
+            <div class="laptop-base" aria-hidden="true"><span></span></div>
+            <div class="laptop-shadow" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="demo-caption wrap"><p id="demo-status" role="status" aria-live="polite" aria-atomic="true">An interactive preview. Sample data, no connection to your Mac.</p><button class="reset-demo" id="reset-demo" disabled>Reset preview <span aria-hidden="true">↺</span></button></div>
+      </div>
+    </section>
+
+    <div class="intro-line wrap reveal"><p>A familiar part of your Mac.<br><strong>A useful part of your day.</strong></p><span>Less reaching for another window.<br>More room for what you’re doing.</span></div>
+
+    <section id="features" class="story task-story wrap reveal" aria-labelledby="tasks-title">
+      <div class="story-copy"><p class="eyebrow">THE NEXT THING, IN REACH</p><h2 id="tasks-title">Less switching.<br>More finishing.</h2><p>A proper little task board, tucked into your notch. Choose an Apple Reminders list, move your work along, and get back to what matters.</p><p class="detail-copy">To do. Doing. Done. The board grows with your list, and each column scrolls in its own space.</p><a class="text-link blue-link" href="#demo" data-show-tab="tasks">Give the board a try <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      <div class="task-illustration" aria-label="Illustration: a task moves from To do to Doing to Done"><span class="illustration-label">A LITTLE MOMENTUM</span><div class="paper-task paper-back"><span class="paper-checkbox"></span><span>Make a little space</span></div><div class="paper-task paper-front"><span class="paper-checkbox checked"><svg class="icon"><use href="#i-check"/></svg></span><div>Make room for a good idea.<small>One thing at a time.</small></div><span class="paper-star" aria-hidden="true">✳</span></div><div class="task-progress"><span>To do</span><i></i><span class="progress-doing">Doing</span><i></i><span>Done <svg class="icon"><use href="#i-check"/></svg></span></div><p>Doing stays on this Mac.<br>Done syncs with Reminders.</p></div>
+    </section>
+
+    <section class="meeting-story" aria-labelledby="meetings-title"><div class="wrap meeting-inner reveal">
+      <div class="meeting-story-heading"><p class="eyebrow">BE THERE. KEEP THE DETAILS.</p><h2 id="meetings-title">Good conversations<br>deserve a little <em>space.</em></h2><p>When a call is detected, HeyNotch can offer to transcribe it. You choose when to start. Capture your microphone and the other side of the call, with the required macOS permissions.</p></div>
+      <div class="conversation-illustration"><div class="conversation-topline"><span><svg class="icon"><use href="#i-wave"/></svg>Both sides of the conversation</span><span>ILLUSTRATIVE TRANSCRIPT</span></div><div class="conversation-line"><span class="speaker speaker-you">Y</span><div><span class="speaker-label">Your microphone <small>00:12</small></span><p>What if we gave the idea<br>a little room to breathe?</p></div></div><div class="conversation-line other-line"><span class="speaker speaker-call"><svg class="icon"><use href="#i-wave"/></svg></span><div><span class="speaker-label">Call audio <small>00:17</small></span><p>Let’s start with a first draft.<br>We can shape it from there.</p></div></div><div class="conversation-bottom"><svg class="icon"><use href="#i-lock"/></svg>Recording starts only when you choose Start.</div></div>
+      <div class="meeting-sequence"><span>A call is detected</span><svg class="icon"><use href="#i-arrow"/></svg><span>You choose Start</span><svg class="icon"><use href="#i-arrow"/></svg><span>Keep the transcript</span></div>
+    </div></section>
+
+    <section class="voice-story wrap reveal" aria-labelledby="voice-title"><div class="voice-heading"><p class="eyebrow">FROM THOUGHT TO TEXT</p><h2 id="voice-title">Some things are<br>easier to <span>say.</span></h2><p>Speak a thought and turn it into text where you’re working. Dictation uses local Whisper. Your next sentence doesn’t need to start with a blank page.</p></div><div class="spoken-note"><span class="spoken-note-label"><svg class="icon"><use href="#i-wave"/></svg>AN EXAMPLE, IN YOUR WORDS</span><p>Send the proposal<br>after lunch<span class="text-caret" aria-hidden="true"></span></p><div class="spoken-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="provider-row"><div><h3>A little polish? Your choice.</h3><p>For optional AI text processing, bring your own key.<br>Choose your provider and the model you want to use.</p></div><div class="provider-names" aria-label="Supported providers"><span><b aria-hidden="true">✳</b>Claude</span><span><b aria-hidden="true">◎</b>OpenAI</span><span><b aria-hidden="true">⇄</b>OpenRouter</span></div></div>
+    </section>
+
+    <section id="control" class="agent-story wrap reveal" aria-labelledby="agent-title"><div class="agent-example"><div class="agent-example-header"><span class="agent-symbol"><svg class="icon"><use href="#i-agent"/></svg></span><span>A small request.<br><strong>A useful next step.</strong></span><span class="example-tag">EXAMPLE</span></div><blockquote>“Add a task to review the proposal in my Work list.”</blockquote><div class="agent-example-result"><span class="result-check"><svg class="icon"><use href="#i-check"/></svg></span><div>Review the proposal<small>Work / To do</small></div><span class="result-task-icon"><svg class="icon"><use href="#i-tasks"/></svg></span></div><p>From your agent to your task list.</p></div><div class="story-copy"><p class="eyebrow">A HAND WITH THE LITTLE THINGS</p><h2 id="agent-title">Your agent.<br>Your boundaries.</h2><p>Connect an MCP client such as Codex or Claude to your tasks. Give each connection access to the lists you choose, with permission to read or make changes.</p><dl class="permission-list"><div><dt>Selected lists</dt><dd>You decide what’s in reach.</dd></div><div><dt>Optional writes</dt><dd>Keep a connection read-only.</dd></div><div><dt>Revocable access</dt><dd>Disconnect it when you want.</dd></div></dl><a class="text-link blue-link" href="#demo" data-show-tab="agent">Try a sample request <svg class="icon"><use href="#i-arrow"/></svg></a></div></section>
+
+    <section class="personal-section wrap reveal" aria-labelledby="personal-title"><div class="personal-notch" aria-hidden="true"><span class="personal-dot"></span><span>Just how you like it.</span><i></i><i></i><i></i></div><div><p class="eyebrow">MAKE A LITTLE ROOM FOR YOU</p><h2 id="personal-title">Your Mac. Your rhythm.</h2><p>Choose what opens first. Adjust the space your task board gets.<br>Keep the little things that make your day feel like yours.</p></div></section>
+
+    <section id="questions" class="faq-section wrap reveal" aria-labelledby="faq-title"><div class="faq-heading"><p class="eyebrow">A FEW LITTLE DETAILS</p><h2 id="faq-title">Good questions.</h2><p>Here’s what to know<br>before making it your own.</p></div><div class="faq-list">
+      <details><summary>Can I download HeyNotch today?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>These previews show the version in development. A public installer is not available yet, and the public source may not include every preview feature. You can explore the project and follow its progress on GitHub.</p><a href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Explore project source ↗</a></div></details>
+      <details><summary>Does it start recording calls automatically?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>No. Meeting reminders can notice microphone or camera activity and offer to transcribe. Recording begins only after you choose Start and grant the required macOS permissions. You control when a session starts and stops.</p></div></details>
+      <details><summary>Where do my words go?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>Dictation uses local Whisper. Optional AI text processing sends the text you choose to the provider you select. Meeting-derived task drafts stay out of AI processing; saving a task uses your selected Apple Reminders list.</p></div></details>
+      <details><summary>Do I need an AI subscription?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>Local dictation does not need a Claude, OpenAI, or OpenRouter key. If you want optional AI text processing, add your own provider API key and select a model. Model access and any usage charges depend on your provider account.</p></div></details>
+      <details><summary>How does the task board work with Reminders?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>Choose a Reminders list to see its tasks in the notch. Doing is progress saved locally on this Mac. Moving a task to Done updates its completion in Reminders. Your existing list remains the home for the task.</p></div></details>
+      <details><summary>What can a connected agent access?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>Each connection is limited to the task lists you select and the read or write access you grant. It does not expose provider API keys or meeting recordings. You can revoke a connection in HeyNotch’s Agent access settings.</p></div></details>
+      <details><summary>Is HeyNotch an Apple app?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>HeyNotch is an independent, personal fork of boring.notch. It is open source under GPL-3.0 and is not affiliated with Apple. macOS and MacBook are Apple trademarks.</p></div></details>
+    </div></section>
+
+    <section id="get-started" class="closing-section reveal"><div class="wrap"><span class="closing-mark brand-mark" aria-hidden="true"><i></i></span><h2>A little addition.<br>A familiar feeling.</h2><p>Make a little more of your Mac.</p><a class="button" href="https://github.com/WOLFIEEEE/HeyNotch" data-get>Get HeyNotch <svg class="icon"><use href="#i-arrow"/></svg></a><span class="closing-note">Development preview · Open source</span><a class="closing-source" href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Explore project source ↗</a></div></section>
+  </main>
+
+  <footer class="site-footer wrap"><a class="brand" href="#" aria-label="HeyNotch home"><span class="brand-mark" aria-hidden="true"><i></i></span>HeyNotch<span class="brand-period">.</span></a><p>A personal fork of boring.notch.<br>Made independently. Shared under GPL-3.0.</p><a href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Find it on GitHub <span aria-hidden="true">↗</span></a><span class="footer-small">A little more, thoughtfully.</span></footer>
+
+  <dialog id="get-dialog" class="get-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description"><button class="dialog-close" aria-label="Close preview information"><svg class="icon"><use href="#i-close"/></svg></button><span class="dialog-label"><i></i>DEVELOPMENT PREVIEW</span><h2 id="dialog-title">A little work<br>in progress.</h2><p id="dialog-description">HeyNotch is a preview build. There isn’t a public installer on this page yet.</p><p>These previews show the version in development. The public source may not include every preview feature yet. Explore the project and follow along as it takes shape.</p><a class="button" href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Explore project source <span aria-hidden="true">↗</span></a><div class="dialog-footnote">For macOS. Open source under GPL-3.0.<br>This website’s demos use sample data only.</div></dialog>
+</body>
+</html>
