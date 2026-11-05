@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D60000000000000000000011 /* ShelfTransferPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60000000000000000000001 /* ShelfTransferPayload.swift */; };
+		D60000000000000000000012 /* ShelfCleanupPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60000000000000000000002 /* ShelfCleanupPolicy.swift */; };
+		D60000000000000000000021 /* ShelfTransferPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60000000000000000000001 /* ShelfTransferPayload.swift */; };
+		D60000000000000000000022 /* ShelfCleanupPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60000000000000000000002 /* ShelfCleanupPolicy.swift */; };
+		D60000000000000000000023 /* SpeechModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D60000000000000000000003 /* SpeechModelStore.swift */; };
 		1100290C2E847E2800035A57 /* NSItemProvider+LoadHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1100290B2E847E2800035A57 /* NSItemProvider+LoadHelpers.swift */; };
 		110029272E84FD4C00035A57 /* TemporaryFileStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110029262E84FD4C00035A57 /* TemporaryFileStorageService.swift */; };
 		1100292A2E8691B400035A57 /* FileShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110029292E8691B400035A57 /* FileShareView.swift */; };
@@ -184,6 +189,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D60000000000000000000001 /* ShelfTransferPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfTransferPayload.swift; sourceTree = "<group>"; };
+		D60000000000000000000002 /* ShelfCleanupPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfCleanupPolicy.swift; sourceTree = "<group>"; };
+		D60000000000000000000003 /* SpeechModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeyNotch/Voice/Runtime/SpeechModelStore.swift; sourceTree = SOURCE_ROOT; };
 		1100290B2E847E2800035A57 /* NSItemProvider+LoadHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSItemProvider+LoadHelpers.swift"; sourceTree = "<group>"; };
 		110029262E84FD4C00035A57 /* TemporaryFileStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryFileStorageService.swift; sourceTree = "<group>"; };
 		110029292E8691B400035A57 /* FileShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileShareView.swift; sourceTree = "<group>"; };
@@ -400,6 +408,8 @@
 		1113ABBF2E80E27000EC13B2 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D60000000000000000000001 /* ShelfTransferPayload.swift */,
+				D60000000000000000000002 /* ShelfCleanupPolicy.swift */,
 				1194E87B2EA19E09009C82D6 /* ImageProcessingService.swift */,
 				118EBE282E946B3F00D54B5A /* ShareServiceFinder.swift */,
 				1100292D2E86940F00035A57 /* QuickShareService.swift */,
@@ -571,6 +581,7 @@
 		14CEF4092C5CAED200855D72 = {
 			isa = PBXGroup;
 			children = (
+				D60000000000000000000003 /* SpeechModelStore.swift */,
 				112B0EB62E30DD0F00562D6C /* mediaremote-adapter */,
 				14CEF4142C5CAED300855D72 /* HeyNotch */,
 				11F748502EC9AABA00F841DB /* HeyNotchXPCHelper */,
@@ -1035,6 +1046,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D60000000000000000000011 /* ShelfTransferPayload.swift in Sources */,
+				D60000000000000000000012 /* ShelfCleanupPolicy.swift in Sources */,
 				D00000000000000000000001 /* AppUpdatePolicy.swift in Sources */,
 				115C12EC2ED3D003009754CA /* OpenNotchHUD.swift in Sources */,
 				14C08BB92C8DE4B1000F8AA0 /* HeyCalendar.swift in Sources */,
@@ -1157,6 +1170,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D60000000000000000000021 /* ShelfTransferPayload.swift in Sources */,
+				D60000000000000000000022 /* ShelfCleanupPolicy.swift in Sources */,
+				D60000000000000000000023 /* SpeechModelStore.swift in Sources */,
 				D00000000000000000000002 /* AppUpdatePolicy.swift in Sources */,
 				D10000000000000000000003 /* SystemInsertionEnvironment.swift in Sources */,
 				D50000000000000000000006 /* AutomationAccessStore.swift in Sources */,
@@ -1182,14 +1198,14 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 273;
+				CURRENT_PROJECT_VERSION = 274;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HeyNotchXPCHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HeyNotchXPCHelper;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.8.1;
+				MARKETING_VERSION = 2.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.HeyNotchXPCHelper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1207,14 +1223,14 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 273;
+				CURRENT_PROJECT_VERSION = 274;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HeyNotchXPCHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HeyNotchXPCHelper;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.8.1;
+				MARKETING_VERSION = 2.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.HeyNotchXPCHelper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1361,7 +1377,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 273;
+				CURRENT_PROJECT_VERSION = 274;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"HeyNotch/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
@@ -1389,7 +1405,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.8.1;
+				MARKETING_VERSION = 2.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch;
 				PRODUCT_NAME = "HeyNotch";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1416,7 +1432,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 273;
+				CURRENT_PROJECT_VERSION = 274;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"HeyNotch/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
@@ -1444,7 +1460,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.8.1;
+				MARKETING_VERSION = 2.8.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch;
 				PRODUCT_NAME = "HeyNotch";
 				PROVISIONING_PROFILE_SPECIFIER = "";

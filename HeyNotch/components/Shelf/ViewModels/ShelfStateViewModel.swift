@@ -90,23 +90,31 @@ final class ShelfStateViewModel: ObservableObject {
     }
 
     func cleanupInvalidItems() {
+        let snapshot = bookmarkSnapshots()
+        guard !snapshot.isEmpty else { return }
         Task { [weak self] in
-            guard let self else { return }
-            var keep: [ShelfItem] = []
-            for item in self.items {
-                switch item.kind {
-                case .file(let data):
-                    let bookmark = Bookmark(data: data)
-                    if await bookmark.validate() {
-                        keep.append(item)
-                    } else {
-                        item.cleanupStoredData()
-                    }
-                default:
-                    keep.append(item)
-                }
+            let invalid = await ShelfCleanupPolicy.invalidSnapshots(in: snapshot) { data in
+                await Bookmark(data: data).validate()
             }
-            await MainActor.run { self.items = keep }
+            guard let self else { return }
+            let removalIDs = ShelfCleanupPolicy.removalIDs(current: self.bookmarkSnapshots(includingPendingUpdates: true), invalid: invalid)
+            guard !removalIDs.isEmpty else { return }
+            // Reconcile the current collection after validation; never restore the old snapshot.
+            // Cleanup is also delayed until the current bookmark is known to match.
+            for item in self.items where removalIDs.contains(item.id) {
+                item.cleanupStoredData()
+                self.pendingBookmarkUpdates.removeValue(forKey: item.id)
+            }
+            self.items.removeAll { removalIDs.contains($0.id) }
+        }
+    }
+
+    private func bookmarkSnapshots(includingPendingUpdates: Bool = false) -> [ShelfBookmarkSnapshot] {
+        items.compactMap { item in
+            guard case .file(let data) = item.kind else { return nil }
+            // A queued refresh already supersedes the bookmark being validated.
+            let currentData = includingPendingUpdates ? (pendingBookmarkUpdates[item.id] ?? data) : data
+            return ShelfBookmarkSnapshot(id: item.id, bookmark: currentData)
         }
     }
 

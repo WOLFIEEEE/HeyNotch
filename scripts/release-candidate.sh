@@ -267,7 +267,7 @@ with tarfile.open(source_payload / 'HeyNotch-source.tar.gz', 'w:gz') as archive:
 (payload / 'READ-ME.txt').write_text('HeyNotch — independent personal fork at WOLFIEEEE/HeyNotch.\n'
     'GPL-3.0; license notices and exact source manifest are included.\n'
     'Download the exact corresponding source alongside this app, at no charge:\n'
-    'https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.1-preview.2/HeyNotch-2.8.1-273-source.tar.gz\n'
+    'https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.2-preview.3/HeyNotch-2.8.2-274-source.tar.gz\n'
     'Move HeyNotch.app to Applications before configuring recording permissions.\n'
     'Automatic updates are disabled in this candidate.\n'
     'See docs/RELEASE_READINESS.md in the source for verification evidence and remaining release gates.\n')
@@ -293,7 +293,7 @@ elif [ "$command_name" = notarize ]; then
     verify_app
     release_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")"
     release_build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")"
-    test "$release_version:$release_build" = "2.8.1:273" || fail "This preview requires app version 2.8.1 (273). Build a fresh candidate before notarization."
+    test "$release_version:$release_build" = "2.8.2:274" || fail "This preview requires app version 2.8.2 (274). Build a fresh candidate before notarization."
     verify_payload
     verify_source_archive
     test -f "$release_root/HeyNotch-CANDIDATE.zip" || fail "Candidate ZIP is missing."
@@ -399,7 +399,7 @@ PYLOG
 import pathlib, sys, tarfile
 out = pathlib.Path(sys.argv[2])
 with tarfile.open(sys.argv[1], 'r:gz') as source:
-    for relative, destination in [('docs/releases/2.8.1-preview.2.md', 'RELEASE_NOTES.md'), ('docs/INSTALL.md', 'INSTALL.md')]:
+    for relative, destination in [('docs/releases/2.8.2-preview.3.md', 'RELEASE_NOTES.md'), ('docs/INSTALL.md', 'INSTALL.md')]:
         entry = source.getmember('HeyNotch-source/' + relative)
         if not entry.isfile():
             raise SystemExit('Release instructions must be regular source files.')

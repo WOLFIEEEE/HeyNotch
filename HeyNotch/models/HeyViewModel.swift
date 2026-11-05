@@ -227,6 +227,16 @@ class HeyViewModel: NSObject, ObservableObject {
         if coordinator.currentView == .home { MusicManager.shared.forceUpdate() }
     }
 
+    func closeIfIdle() {
+        let state = NotchAutoCloseState(isOpen: notchState == .open,
+                                       pointerInside: isMouseHovering(),
+                                       menuActive: isNotchMenuActive,
+                                       popoverActive: isBatteryPopoverActive,
+                                       sharingActive: SharingStateManager.shared.preventNotchClose,
+                                       dropTargeted: anyDropZoneTargeting)
+        if state.permitsClose { close() }
+    }
+
     func close() {
         // Do not close while a share picker or sharing service is active
         if SharingStateManager.shared.preventNotchClose {

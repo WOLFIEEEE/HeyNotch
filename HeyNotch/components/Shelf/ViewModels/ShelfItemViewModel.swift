@@ -122,46 +122,38 @@ final class ShelfItemViewModel: ObservableObject {
     }
 
     func shareItem(from view: NSView?) {
-        Task {
-            var itemsToShare: [Any] = []
-            var fileURLs: [URL] = []
-            if case .text(let text) = item.kind {
-                itemsToShare.append(text)
-            } else {
-                for item in ShelfSelectionModel.shared.selectedItems(in: ShelfStateViewModel.shared.items) {
-                    switch item.kind {
-                    case .file:
-                        // Use immediate update for user-initiated share action
-                        if let url = ShelfStateViewModel.shared.resolveAndUpdateBookmark(for: item) {
-                            itemsToShare.append(url)
-                            fileURLs.append(url)
-                        }
-                    case .text(let string):
-                        itemsToShare.append(string)
-                    case .link(let url):
-                        itemsToShare.append(url)
-                    }
-                }
-            }
-            
-            guard !itemsToShare.isEmpty else { return }
-             
+        guard let view else { return }
+        let payload = selectedTransferPayload()
+        guard !payload.values.isEmpty else { return }
+
+        // Preserve deferred presentation after the context-menu action completes.
+        Task { @MainActor in
             stopSharingAccessingURLs()
             // Start security-scoped access for all file URLs and keep it active during sharing
-            sharingAccessingURLs = fileURLs.filter { $0.startAccessingSecurityScopedResource() }
-            
+            sharingAccessingURLs = payload.fileURLs.filter { $0.startAccessingSecurityScopedResource() }
+
             // Create and retain lifecycle delegate for the entire share operation
             let lifecycle = SharingStateManager.shared.makeDelegate { [weak self] in
                 self?.sharingLifecycle = nil
                 self?.stopSharingAccessingURLs()
             }
             self.sharingLifecycle = lifecycle
-            
-            let picker = NSSharingServicePicker(items: itemsToShare)
+
+            let picker = NSSharingServicePicker(items: payload.sharingItems)
             picker.delegate = lifecycle
             lifecycle.markPickerBegan()
-            if let view {
-                picker.show(relativeTo: .zero, of: view, preferredEdge: .minY)
+            picker.show(relativeTo: .zero, of: view, preferredEdge: .minY)
+        }
+    }
+
+    private func selectedTransferPayload() -> ShelfTransferPayload {
+        let state = ShelfStateViewModel.shared
+        return ShelfTransferPayload(clicked: item, selected: selection.selectedItems(in: state.items)) { item in
+            switch item.kind {
+            case .file:
+                return state.resolveAndUpdateBookmark(for: item).map(ShelfTransferPayload.Value.file)
+            case .text(let text): return .text(text)
+            case .link(let url): return .link(url)
             }
         }
     }
@@ -508,7 +500,9 @@ final class ShelfItemViewModel: ObservableObject {
                 }
 
             case "Copy":
-                let selected = ShelfSelectionModel.shared.selectedItems(in: ShelfStateViewModel.shared.items)
+                let payload = viewModel.selectedTransferPayload()
+                let pasteboardItems = payload.pasteboardItems()
+                guard !pasteboardItems.isEmpty else { return }
                 let pb = NSPasteboard.general
                 
                 // Stop accessing previously copied URLs
@@ -516,28 +510,11 @@ final class ShelfItemViewModel: ObservableObject {
                     url.stopAccessingSecurityScopedResource()
                 }
                 ShelfItemViewModel.copiedURLs.removeAll()
-                
+                ShelfItemViewModel.copiedURLs = payload.fileURLs.filter { $0.startAccessingSecurityScopedResource() }
                 pb.clearContents()
-                Task {
-                    let fileURLs = await selected.asyncCompactMap { item -> URL? in
-                        if case .file = item.kind {
-                            return ShelfStateViewModel.shared.resolveAndUpdateBookmark(for: item)
-                        }
-                        return nil
-                    }
-                    if !fileURLs.isEmpty {
-                        // Start security-scoped access for all URLs and keep them active
-                        ShelfItemViewModel.copiedURLs = fileURLs.filter { $0.startAccessingSecurityScopedResource() }
-                        NSLog("🔐 Started security-scoped access for \(ShelfItemViewModel.copiedURLs.count) copied files")
-                        
-                        // Write to pasteboard
-                        pb.writeObjects(fileURLs as [NSURL])
-                    } else {
-                        let strings = selected.map { $0.displayName }
-                        if !strings.isEmpty {
-                            pb.setString(strings.joined(separator: "\n"), forType: .string)
-                        }
-                    }
+                if !pb.writeObjects(pasteboardItems) {
+                    for url in ShelfItemViewModel.copiedURLs { url.stopAccessingSecurityScopedResource() }
+                    ShelfItemViewModel.copiedURLs.removeAll()
                 }
 
             case "Remove":

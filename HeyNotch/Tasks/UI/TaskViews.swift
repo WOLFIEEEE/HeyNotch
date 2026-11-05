@@ -256,7 +256,8 @@ struct TaskDraftView: View {
                 if let error = controller.errorMessage { Text(error).foregroundStyle(.red).textSelection(.enabled) }
             }.formStyle(.grouped).disabled(controller.saving)
             HStack {
-                Button("Cancel") { controller.draft = nil; controller.closeDraft() }.keyboardShortcut(.cancelAction)
+                Button("Cancel") { controller.cancelDraft() }
+                    .keyboardShortcut(.cancelAction).disabled(controller.saving)
                 Spacer()
                 if controller.saving { ProgressView().controlSize(.small) }
                 Button("Save task") {

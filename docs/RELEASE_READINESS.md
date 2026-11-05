@@ -1,6 +1,16 @@
 # HeyNotch release readiness
 
-Audit date: 5 November 2026. Scope: the independent `WOLFIEEEE/HeyNotch` fork. This record separates a working development build, a distribution candidate, and product acceptance. It is not a production approval.
+Audit date: 6 November 2026. Scope: the independent `WOLFIEEEE/HeyNotch` fork. This record separates a working development build, a distribution candidate, and product acceptance. It is not a production approval.
+
+## Preview 3 UX candidate — 2.8.2 (274)
+
+The thirteen confirmed UX audit findings are fixed in this candidate: unsaved task draft protection, truthful save cancellation, obsolete Undo cleanup, current list summaries, persistent compact navigation, shared automatic-close protection, exact Shelf copy/share payloads, concurrent Shelf cleanup, processing cancellation and status, voice retry availability, and installed-model disk budgeting. See [fix details and regression mapping](UX_FIXES.md) and [Preview 3 notes](releases/2.8.2-preview.3.md).
+
+The complete integrated app suite passed **323 tests, with zero failures and zero skips**, including the actual stdio MCP/loopback integration test and **48 new regressions**. The repository/release suite passed **48 checks**. The website download update passed **9 existing motion tests** and static checks for **65 links/assets**; no animation or styling changes were made to the website.
+
+The first integrated build identified an incorrect source group for the navigation policy; it was moved out of the XPC-shared group into Tasks Core. The first successful suite skipped the existing MCP connector fixture; building that fixture and rerunning the suite produced the complete result above. Private clipboard tests preserve native NSURL file writers and verify real temporary-file URL/content readback. Their isolated process still logs sandbox-extension consumption diagnostics; passing fixture reads are not a cross-app sandbox acceptance claim.
+
+At the source snapshot stage, Developer ID packaging, Apple notarization and public download verification are still distribution steps. Completed distribution evidence will be recorded in the publication record after the exact final assets are verified. New installed-app cursor/menu/popover/drag sessions, cross-app paste/share, frame-rate measurements, live calls, native notifications, paid provider requests and wider device/macOS acceptance are not claimed. Automatic updates remain disabled; this remains a preview.
 
 ## Published Preview 2 — 2.8.1 (273)
 

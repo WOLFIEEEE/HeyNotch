@@ -152,7 +152,7 @@ private struct VoiceStatusView: View {
                     if voice.result != voice.original { Button("Copy result") { voice.copy() } }
                     if voice.phase == .review {
                         Button("Use original") { voice.useOriginal() }
-                        Button("Retry cleanup") { voice.retryProcessing() }
+                        if voice.canRetryCleanup { Button("Retry cleanup") { voice.retryProcessing() } }
                     }
                 }
                 Spacer(minLength: 0)

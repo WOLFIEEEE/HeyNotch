@@ -12,6 +12,7 @@ final class ProcessingController: ObservableObject {
     @Published private(set) var isWorking = false
     private var task: Task<Void, Never>?
     private var job = UUID()
+    private var activeWork: (provider: ProcessingProvider, message: String, cancelledMessage: String)?
 
     init(store: ProcessingSettingsStore, keys: any ProviderKeyStoring = ProviderKeyStore(), api: ProviderAPI = ProviderAPI()) {
         self.store = store; self.keys = keys; self.api = api
@@ -21,16 +22,29 @@ final class ProcessingController: ObservableObject {
         job = UUID()
         task?.cancel()
         task = nil
+        if let activeWork, messages[activeWork.provider] == activeWork.message {
+            messages[activeWork.provider] = activeWork.cancelledMessage
+        }
+        activeWork = nil
         isWorking = false
     }
 
     func preparePane(for provider: ProcessingProvider) async {
+        let paneJob = job
         do {
+            try Task.checkCancellation()
             let exists = try await keys.read(provider) != nil
+            // Keychain reads can finish after SwiftUI cancels its pane task.
+            // They must not restart work or overwrite a newer pane's state.
+            guard !Task.isCancelled, job == paneJob,
+                  store.preferences.activeProvider == provider else { return }
             hasKey[provider] = exists
-            guard store.preferences.activeProvider == provider else { return }
             if exists && !(store.catalog(provider)?.isFresh(at: Date()) ?? false) { refresh(provider) }
-        } catch { messages[provider] = ProcessingError.sanitized(error) }
+        } catch {
+            guard !Task.isCancelled, job == paneJob,
+                  store.preferences.activeProvider == provider else { return }
+            messages[provider] = ProcessingError.sanitized(error)
+        }
     }
 
     func saveKey(_ key: String, provider: ProcessingProvider) async -> Bool {
@@ -63,18 +77,21 @@ final class ProcessingController: ObservableObject {
         let value = store.preferences
         let provider = provider ?? value.activeProvider
         let config = value.configuration(provider)
-        guard let key = try await keys.read(provider), !key.isEmpty else { throw ProcessingError.missingKey }
+        let key = try await keys.read(provider)
+        try Task.checkCancellation()
+        guard let key, !key.isEmpty else { throw ProcessingError.missingKey }
         guard store.preferences.configuration(provider).revision == config.revision else { throw ProcessingError.configurationChanged }
         return ProcessingSnapshot(provider: provider, configuration: config, model: store.selection(provider),
                                    key: key, timeout: value.timeout, preferencesRevision: value.revision)
     }
 
     func refresh(_ provider: ProcessingProvider) {
-        launch(provider, message: "Verifying key and loading models…") { [self] id in
+        launch(provider, message: "Verifying key and loading models…", cancelledMessage: "Verification cancelled.") { [self] id in
             let snapshot = try await snapshot(provider)
             if provider == .openrouter { try await api.verifyOpenRouterKey(snapshot) }
             let models = try await api.models(snapshot)
-            guard job == id, store.configurationMatches(snapshot) else { return }
+            guard job == id else { return }
+            guard store.configurationMatches(snapshot) else { throw ProcessingError.configurationChanged }
             store.recordModels(models, snapshot: snapshot)
             hasKey[provider] = true
             messages[provider] = "Key verified. \(models.count) models loaded. Model access still needs a generation test."
@@ -82,7 +99,8 @@ final class ProcessingController: ObservableObject {
     }
 
     func testModel(_ provider: ProcessingProvider, structured: Bool = false) {
-        launch(provider, message: structured ? "Testing structured output…" : "Testing selected model…") { [self] id in
+        launch(provider, message: structured ? "Testing structured output…" : "Testing selected model…",
+               cancelledMessage: "Model test cancelled.") { [self] id in
             let snapshot = try await snapshot(provider)
             let started = Date()
             let output = try await api.generate(snapshot,
@@ -93,7 +111,8 @@ final class ProcessingController: ObservableObject {
                       let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                       object["text"] as? String == "Hello from HeyNotch" else { throw ProcessingError.invalidOutput }
             }
-            guard job == id, store.configurationMatches(snapshot) else { return }
+            guard job == id else { return }
+            guard store.configurationMatches(snapshot) else { throw ProcessingError.configurationChanged }
             let previous = store.preferences.configuration(provider).test
             let result = ModelTestResult(revision: snapshot.configuration.revision, modelID: snapshot.configuration.modelID,
                                           testedAt: Date(), elapsedMilliseconds: Int(Date().timeIntervalSince(started) * 1000),
@@ -103,15 +122,17 @@ final class ProcessingController: ObservableObject {
         }
     }
 
-    private func launch(_ provider: ProcessingProvider, message: String, work: @escaping @MainActor (UUID) async throws -> Void) {
+    private func launch(_ provider: ProcessingProvider, message: String, cancelledMessage: String,
+                        work: @escaping @MainActor (UUID) async throws -> Void) {
         cancel()
         let id = job
         isWorking = true
         messages[provider] = message
+        activeWork = (provider, message, cancelledMessage)
         task = Task { [weak self] in
             do { try await work(id) }
             catch { if self?.job == id { self?.messages[provider] = ProcessingError.sanitized(error) } }
-            if self?.job == id { self?.isWorking = false; self?.task = nil }
+            if self?.job == id { self?.isWorking = false; self?.task = nil; self?.activeWork = nil }
         }
     }
 }

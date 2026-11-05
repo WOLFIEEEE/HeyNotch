@@ -30,6 +30,10 @@ final class VoiceCoordinator: ObservableObject {
     private var style: CleanupStyle = .off
     private var failurePreference: ProcessingFailurePreference = .review
     private var pasteAttempted = false
+    var canRetryCleanup: Bool {
+        VoiceReviewPolicy.canRetryCleanup(phase: phase, hasTranscript: !original.isEmpty,
+                                         pasteAttempted: pasteAttempted)
+    }
     private var memoryPressure: DispatchSourceMemoryPressure?
     private var releaseWatchdog: Task<Void, Never>?
 
@@ -201,7 +205,7 @@ final class VoiceCoordinator: ObservableObject {
     }
 
     func retryProcessing() {
-        guard phase == .review, !original.isEmpty, !pasteAttempted else { return }
+        guard canRetryCleanup else { return }
         let preferences = ProcessingSettingsStore.shared.preferences
         processingRevision = preferences.revision
         style = preferences.enabled ? preferences.cleanupStyle : .off

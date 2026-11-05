@@ -167,9 +167,7 @@ struct ContentView: View {
                                 try? await Task.sleep(for: .milliseconds(100))
                                 guard !Task.isCancelled else { return }
                                 await MainActor.run {
-                                    if self.vm.notchState == .open && !self.vm.isMouseHovering() && !self.vm.isNotchMenuActive && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
-                                        self.vm.close()
-                                    }
+                                    self.vm.closeIfIdle()
                                 }
                             }
                         }
@@ -188,9 +186,7 @@ struct ContentView: View {
                                 try? await Task.sleep(for: .milliseconds(100))
                                 guard !Task.isCancelled else { return }
                                 await MainActor.run {
-                                    if !self.vm.isBatteryPopoverActive && !self.vm.isMouseHovering() && !self.vm.isNotchMenuActive && self.vm.notchState == .open && !SharingStateManager.shared.preventNotchClose {
-                                        self.vm.close()
-                                    }
+                                    self.vm.closeIfIdle()
                                 }
                             }
                         }
@@ -261,9 +257,7 @@ struct ContentView: View {
                 }
 
                 vm.dropEvent = false
-                if !vm.isMouseHovering() && !vm.isNotchMenuActive && !SharingStateManager.shared.preventNotchClose {
-                    vm.close()
-                }
+                vm.closeIfIdle()
             }
         }
         .onDisappear {
@@ -585,9 +579,7 @@ struct ContentView: View {
                         self.isHovering = true
                         return
                     }
-                    if self.vm.notchState == .open && !self.vm.isMouseHovering() && !self.vm.isNotchMenuActive && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
-                        self.vm.close()
-                    }
+                    self.vm.closeIfIdle()
                 }
             }
         }

@@ -1,6 +1,6 @@
 # Install HeyNotch Preview
 
-This guide applies to **HeyNotch 2.8.1 Preview 2**, app version **2.8.1 (273)**. Use the notarized ZIP attached to its published release in **WOLFIEEEE/HeyNotch**. A local file named `HeyNotch-CANDIDATE.zip` has not passed the distribution gate and is not a public installer.
+This guide applies to **HeyNotch 2.8.2 Preview 3**, app version **2.8.2 (274)**. Use the notarized ZIP attached to its published release in **WOLFIEEEE/HeyNotch**. A local file named `HeyNotch-CANDIDATE.zip` has not passed the distribution gate and is not a public installer.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ This guide applies to **HeyNotch 2.8.1 Preview 2**, app version **2.8.1 (273)**.
 
 There is no privileged installer, separate helper installation, or automatic updater. The signed MCP helper is inside the app bundle. Keep the app in Applications so permissions and MCP client paths remain stable.
 
-The corresponding source is a separate release asset, **`HeyNotch-2.8.1-273-source.tar.gz`**, alongside the app ZIP on the same release page. It is not nested inside the app ZIP and is not needed to run the app. Download it to inspect or build the exact source identified by the included `SOURCE_STATE.json`.
+The corresponding source is a separate release asset, **`HeyNotch-2.8.2-274-source.tar.gz`**, alongside the app ZIP on the same release page. It is not nested inside the app ZIP and is not needed to run the app. Download it to inspect or build the exact source identified by the included `SOURCE_STATE.json`.
 
 ## First use
 

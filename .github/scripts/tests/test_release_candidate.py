@@ -19,9 +19,9 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
-VERSION, BUILD, TAG = "2.8.1", "273", "v2.8.1-preview.2"
+VERSION, BUILD, TAG = "2.8.2", "274", "v2.8.2-preview.3"
 SOURCE_NAME = f"HeyNotch-{VERSION}-{BUILD}-source.tar.gz"
-NOTES_PATH = "docs/releases/2.8.1-preview.2.md"
+NOTES_PATH = "docs/releases/2.8.2-preview.3.md"
 
 TOOL = r'''#!/usr/bin/env python3
 import hashlib,json,os,pathlib,plistlib,shutil,sys,zipfile
@@ -30,7 +30,7 @@ if name=='xcodebuild':
     root=pathlib.Path(a[a.index('-derivedDataPath')+1])/'Build/Products/Release/HeyNotch.app'
     for bundle,bid,executable in [(root,'com.wolfieeee.heynotch','HeyNotch'),(root/'Contents/XPCServices/HeyNotchXPCHelper.xpc','com.wolfieeee.heynotch.HeyNotchXPCHelper','HeyNotchXPCHelper')]:
         (bundle/'Contents/MacOS').mkdir(parents=True)
-        info={'CFBundleIdentifier':bid,'CFBundleExecutable':executable,'CFBundleShortVersionString':os.getenv('FIXTURE_VERSION','2.8.1'),'CFBundleVersion':os.getenv('FIXTURE_BUILD','273'),'NSMicrophoneUsageDescription':'Fixture only','HeyNotchUpdatesEnabled':False}
+        info={'CFBundleIdentifier':bid,'CFBundleExecutable':executable,'CFBundleShortVersionString':os.getenv('FIXTURE_VERSION','2.8.2'),'CFBundleVersion':os.getenv('FIXTURE_BUILD','274'),'NSMicrophoneUsageDescription':'Fixture only','HeyNotchUpdatesEnabled':False}
         (bundle/'Contents/Info.plist').write_bytes(plistlib.dumps(info))
         (bundle/'Contents/MacOS'/executable).write_bytes(b'fixture executable')
     (root/'Contents/Helpers').mkdir();(root/'Contents/Helpers/heynotch-mcp').write_bytes(b'fixture helper')
@@ -128,11 +128,11 @@ class ReleaseCandidateTests(unittest.TestCase):
         self.assertEqual(self.tool_calls(), [])
 
     def test_old_version_or_build_never_reaches_notary_upload(self):
-        for version, build in (("2.8.0", "272"), (VERSION, "272")):
+        for version, build in (("2.8.0", "272"), ("2.8.1", "273"), (VERSION, "273"), ("2.8.1", BUILD)):
             with self.subTest(version=version, build=build):
                 self.run_release("build", FIXTURE_VERSION=version, FIXTURE_BUILD=build)
                 output = self.run_release("notarize", success=False)
-                self.assertIn("requires app version 2.8.1 (273)", output)
+                self.assertIn(f"requires app version {VERSION} ({BUILD})", output)
                 self.assertEqual(self.tool_calls(), [])
                 shutil.rmtree(self.root / "build")
 
