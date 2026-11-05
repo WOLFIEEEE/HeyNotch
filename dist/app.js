@@ -209,61 +209,149 @@
     });
   }
 
+  // Motion is driven by real input, never by a self-scheduling animation loop.
+  const hasIntersectionObserver = "IntersectionObserver" in window;
+  const revealElements = [...document.querySelectorAll("[data-reveal]")];
   let inView = false;
   let pointer = null;
   let frame = 0;
+  let revealObserver = null;
+  const sceneValues = new Map();
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+  function setSceneValue(element, property, value) {
+    const key = `${element.id}:${property}`;
+    if (sceneValues.get(key) === value) return;
+    sceneValues.set(key, value);
+    element.style.setProperty(property, value);
+  }
+  function resetScene() {
+    setSceneValue(laptop, "--tilt-x", "0deg");
+    setSceneValue(laptop, "--tilt-y", "0deg");
+    setSceneValue(laptop, "--scene-y", "0px");
+    setSceneValue(laptop, "--scene-pitch", "0deg");
+    setSceneValue(laptop, "--scene-scale", "1");
+    setSceneValue(stage, "--wallpaper-y", "0px");
+    setSceneValue(stage, "--halo-y", "0px");
+  }
+  function stopScene() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    pointer = null;
+    resetScene();
+  }
   function updateScene() {
     frame = 0;
-    if (reducedMotion.matches || !inView || document.hidden) {
-      laptop.style.setProperty("--tilt-x", "0deg");
-      laptop.style.setProperty("--tilt-y", "0deg");
-      laptop.style.setProperty("--scene-y", "0px");
+    if (reducedMotion.matches || document.hidden) {
+      resetScene();
       return;
     }
-    const rect = stage.getBoundingClientRect();
-    const x = pointer ? Math.max(-.5, Math.min(.5, (pointer.x - rect.left) / rect.width - .5)) : 0;
-    const y = pointer ? Math.max(-.5, Math.min(.5, (pointer.y - rect.top) / rect.height - .5)) : 0;
-    laptop.style.setProperty("--tilt-x", `${(-y * 3).toFixed(2)}deg`);
-    laptop.style.setProperty("--tilt-y", `${(x * 4).toFixed(2)}deg`);
-    laptop.style.setProperty("--scene-y", `${Math.max(-8, Math.min(12, -rect.top * .026)).toFixed(2)}px`);
+    // The fallback needs one geometry read per scroll event batch, even offscreen.
+    // Modern browsers use the observer and do no offscreen scroll work here.
+    let rect = null;
+    if (!hasIntersectionObserver) {
+      rect = stage.getBoundingClientRect();
+      inView = rect.bottom > 0 && rect.top < window.innerHeight;
+      stage.classList.toggle("is-in-view", inView);
+    }
+    if (!inView) { resetScene(); return; }
+    rect = rect || stage.getBoundingClientRect();
+    const x = pointer ? clamp((pointer.x - rect.left) / rect.width - .5, -.5, .5) : 0;
+    const y = pointer ? clamp((pointer.y - rect.top) / rect.height - .5, -.5, .5) : 0;
+    const progress = clamp((window.innerHeight * .56 - rect.top - rect.height / 2)
+      / ((window.innerHeight + rect.height) / 2), -1, 1);
+    const travel = window.innerWidth <= 650 ? 9 : 18;
+    // Geometry is read once above; every write below changes only a transform.
+    setSceneValue(laptop, "--tilt-x", `${(-y * 3).toFixed(2)}deg`);
+    setSceneValue(laptop, "--tilt-y", `${(x * 4).toFixed(2)}deg`);
+    setSceneValue(laptop, "--scene-y", `${(progress * travel).toFixed(2)}px`);
+    setSceneValue(laptop, "--scene-pitch", `${(progress * 1.8).toFixed(2)}deg`);
+    setSceneValue(laptop, "--scene-scale", (1 + progress * .012).toFixed(4));
+    setSceneValue(stage, "--wallpaper-y", `${(-progress * 8).toFixed(2)}px`);
+    setSceneValue(stage, "--halo-y", `${(-progress * 12).toFixed(2)}px`);
   }
   function requestSceneUpdate() {
-    if (!frame) frame = requestAnimationFrame(updateScene);
+    if (frame || reducedMotion.matches || document.hidden || (hasIntersectionObserver && !inView)) return;
+    frame = requestAnimationFrame(updateScene);
   }
+
+  function revealElement(element, immediately = false) {
+    if (immediately) element.classList.add("reveal-immediately");
+    element.classList.add("is-revealed");
+    revealObserver?.unobserve(element);
+  }
+  function revealAll() {
+    revealElements.forEach(element => revealElement(element, true));
+    revealObserver?.disconnect();
+  }
+  function revealHashTarget(hash = window.location.hash) {
+    if (!hash || hash === "#") return;
+    let target;
+    try { target = document.getElementById(decodeURIComponent(hash.slice(1))); }
+    catch { return; }
+    if (!target) return;
+    const parent = target.closest("[data-reveal]");
+    if (parent) revealElement(parent, true);
+    target.querySelectorAll("[data-reveal]").forEach(element => revealElement(element, true));
+  }
+
   stage.addEventListener("pointermove", event => {
-    if (event.pointerType !== "mouse" || reducedMotion.matches) return;
+    if (event.pointerType !== "mouse" || reducedMotion.matches || !inView || document.hidden) return;
     pointer = { x: event.clientX, y: event.clientY };
     requestSceneUpdate();
   }, { passive: true });
   stage.addEventListener("pointerleave", () => { pointer = null; requestSceneUpdate(); }, { passive: true });
-  window.addEventListener("scroll", () => { if (inView && !reducedMotion.matches) requestSceneUpdate(); }, { passive: true });
+  window.addEventListener("scroll", requestSceneUpdate, { passive: true });
   window.addEventListener("resize", requestSceneUpdate, { passive: true });
   document.addEventListener("visibilitychange", () => {
     document.documentElement.classList.toggle("page-inactive", document.hidden);
-    pointer = null;
-    requestSceneUpdate();
+    if (document.hidden) stopScene();
+    else requestSceneUpdate();
   });
-  reducedMotion.addEventListener("change", requestSceneUpdate);
-  if ("IntersectionObserver" in window) {
+  reducedMotion.addEventListener("change", () => {
+    if (reducedMotion.matches) { stopScene(); revealAll(); }
+    else requestSceneUpdate();
+  });
+  // Keyboard and anchor navigation must never land on a hidden, delayed element.
+  document.addEventListener("focusin", event => {
+    const target = event.target.closest?.("[data-reveal]");
+    if (target) revealElement(target, true);
+    if (stage.contains(event.target)) { pointer = null; requestSceneUpdate(); }
+  });
+  document.addEventListener("click", event => {
+    const link = event.target.closest?.('a[href^="#"]');
+    if (link && !event.defaultPrevented) revealHashTarget(link.getAttribute("href"));
+  });
+  window.addEventListener("hashchange", () => revealHashTarget());
+  window.addEventListener("pagehide", stopScene);
+  window.addEventListener("pageshow", () => { revealHashTarget(); requestSceneUpdate(); });
+
+  if (hasIntersectionObserver) {
     new IntersectionObserver(entries => {
-      inView = entries[0].isIntersecting;
+      const latest = entries[entries.length - 1];
+      if (!latest) return;
+      inView = latest.isIntersecting;
       stage.classList.toggle("is-in-view", inView);
-      requestSceneUpdate();
-    }, { threshold: .05 }).observe(stage);
-    const revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-revealed");
-          revealObserver.unobserve(entry.target);
-        }
+      if (inView) requestSceneUpdate();
+      else stopScene();
+    }, { threshold: .01 }).observe(stage);
+    if (!reducedMotion.matches) {
+      revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) revealElement(entry.target);
+        });
+      }, { threshold: .01, rootMargin: "0px 0px -40px 0px" });
+      revealElements.forEach(element => {
+        if (element.getBoundingClientRect().top >= window.innerHeight - 40) {
+          element.classList.add("will-reveal");
+          revealObserver.observe(element);
+        } else revealElement(element, true);
       });
-    }, { threshold: .08 });
-    document.querySelectorAll(".reveal").forEach(element => {
-      if (!reducedMotion.matches && element.getBoundingClientRect().top > window.innerHeight) element.classList.add("will-reveal");
-      revealObserver.observe(element);
-    });
+    }
   } else {
-    inView = true;
-    stage.classList.add("is-in-view");
+    // Content remains visible if IntersectionObserver is unavailable.
+    requestSceneUpdate();
   }
+  document.documentElement.classList.toggle("page-inactive", document.hidden);
+  revealHashTarget();
 })();
