@@ -33,9 +33,9 @@ The inherited notch features remain available:
 
 ## Getting started
 
-**HeyNotch 2.8.1 Preview 2 is available**, with fixes for unintended notch opening and unstable animations. [Download the notarized app ZIP](https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.1-preview.2/HeyNotch-2.8.1-273-notarized.zip), or view the [release and corresponding source](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.1-preview.2). Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
+**HeyNotch 2.8.2 Preview 3 is available**, with thirteen verified UX fixes across tasks, notch navigation, Shelf, and processing. [Download the notarized app ZIP](https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.2-preview.3/HeyNotch-2.8.2-274-notarized.zip), or view the [release and corresponding source](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.2-preview.3). Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
 
-The release provides the notarized app ZIP and **`HeyNotch-2.8.1-273-source.tar.gz`** as separate downloads on the same release page. The app ZIP includes license notices, `SOURCE_STATE.json`, and a direct link to its matching source archive; the source is not nested inside the app ZIP.
+The release provides the notarized app ZIP and **`HeyNotch-2.8.2-274-source.tar.gz`** as separate downloads on the same release page. The app ZIP includes license notices, `SOURCE_STATE.json`, and a direct link to its matching source archive; the source is not nested inside the app ZIP.
 
 Open **Settings → Voice**, enable voice input, allow microphone access, and download/prepare a speech model. Compressed Turbo is the recommended multilingual option (about 648 MB); Base is a smaller option (about 149 MB). First preparation can take several minutes. Wait for **Ready**, then focus a text field in another app. Text insertion also needs Accessibility access.
 
