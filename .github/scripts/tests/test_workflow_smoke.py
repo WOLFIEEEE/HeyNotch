@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Regression checks for the archived release pipeline.
+"""Regression checks for active CodeQL and the archived release pipeline.
 
-These workflows are disabled outside .github/workflows; these checks pin the nightly
+The release workflows are disabled outside .github/workflows; these checks pin the nightly
 rolling-release invariants (fixed tag/asset/title, attestation, signed API
 commits) and the shared derive-don't-reserve build-number scheme that
 stable/beta follow too.
@@ -10,6 +10,8 @@ stable/beta follow too.
 from __future__ import annotations
 
 import unittest
+import re
+import shlex
 from pathlib import Path
 
 
@@ -30,6 +32,38 @@ class WorkflowSmokeTests(unittest.TestCase):
         self.manual_build = (REPOSITORY_ROOT / ".github" / "disabled-workflows" / "manual_build.yml").read_text(
             encoding="utf-8"
         )
+        self.codeql = (REPOSITORY_ROOT / ".github" / "workflows" / "codeql.yml").read_text(
+            encoding="utf-8"
+        )
+
+    def test_codeql_actions_share_one_immutable_version(self) -> None:
+        # Init and analyze exchange database state and reject different action
+        # versions at runtime. Allow upgrades, but require one full commit pin.
+        actions = re.findall(
+            r"^\s*uses:\s*github/codeql-action/([\w-]+)@([^\s#]+)(?:\s*#\s*(v[\d.]+))?",
+            self.codeql, re.MULTILINE,
+        )
+        self.assertTrue({"init", "analyze"}.issubset({name for name, _, _ in actions}))
+        for name, revision, _ in actions:
+            self.assertRegex(revision, r"^[0-9a-f]{40}$", name)
+        self.assertEqual(len({revision for _, revision, _ in actions}), 1,
+                         "CodeQL actions must use the same revision, including after dependency updates.")
+        documented_versions = {version for _, _, version in actions if version}
+        self.assertLessEqual(len(documented_versions), 1)
+
+    def test_codeql_resolve_and_build_use_the_supported_package_cache_flag(self) -> None:
+        # xcodebuild accepts the ...DirPath spelling, not ...Dir. The resolve
+        # and traced build must also share the same explicit package checkout.
+        cache_arguments = re.findall(r"^\s*(-clonedSourcePackages\w+)\s+([^\n]+)",
+                                     self.codeql, re.MULTILINE)
+        self.assertEqual(len(cache_arguments), 2)
+        paths = []
+        for flag, arguments in cache_arguments:
+            self.assertEqual(flag, "-clonedSourcePackagesDirPath")
+            values = shlex.split(arguments.rstrip().removesuffix("\\").rstrip())
+            self.assertEqual(len(values), 1)
+            paths.append(values[0])
+        self.assertEqual(paths, ["$RUNNER_TEMP/HeyNotch-source-packages"] * 2)
 
     def test_nightly_uses_the_fixed_rolling_tag_and_asset(self) -> None:
         self.assertIn("TAG: nightly", self.nightly)
