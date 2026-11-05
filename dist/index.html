@@ -12,11 +12,18 @@
   <meta property="og:title" content="HeyNotch — A little more Mac.">
   <meta property="og:description" content="Your tasks, music, words, and meetings. Right where your Mac leaves a little room.">
   <meta property="og:url" content="https://wolfieeee.github.io/HeyNotch/">
-  <meta property="og:image" content="https://wolfieeee.github.io/HeyNotch/social.svg">
-  <meta property="og:image:alt" content="HeyNotch. A little more Mac. A blue desktop with an expanded task notch.">
+  <meta property="og:image" content="https://wolfieeee.github.io/HeyNotch/social.png?v=brand-1">
+  <meta property="og:image:alt" content="HeyNotch. A little more Mac. The blue notch-shaped H emblem and HeyNotch wordmark.">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=5b3d61acf1ee">
+  <meta name="twitter:image" content="https://wolfieeee.github.io/HeyNotch/social.png?v=brand-1">
+  <meta name="twitter:image:alt" content="HeyNotch. A little more Mac. The blue notch-shaped H emblem and HeyNotch wordmark.">
+  <link rel="icon" href="favicon-32.png?v=brand-1" type="image/png" sizes="32x32">
+  <link rel="icon" href="favicon-192.png?v=brand-1" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=brand-1" sizes="180x180">
+  <link rel="stylesheet" href="style.css?v=brand-1">
   <script src="app.js?v=4ad49909f463" defer></script>
 </head>
 <body>
@@ -39,7 +46,7 @@
   </defs></svg>
 
   <header class="site-header wrap">
-    <a class="brand" href="#" aria-label="HeyNotch home"><span class="brand-mark" aria-hidden="true"><i></i></span>HeyNotch<span class="brand-period">.</span></a>
+    <a class="brand" href="#" aria-label="HeyNotch home"><img class="brand-wordmark" src="assets/heynotch-wordmark.png?v=brand-1" width="600" height="192" alt="HeyNotch" decoding="async"></a>
     <button class="nav-toggle" aria-expanded="false" aria-controls="site-navigation" aria-label="Open navigation"><span></span><span></span></button>
     <nav id="site-navigation" class="site-navigation" aria-label="Main navigation">
       <a href="#features">The little things</a><a href="#control">Your control</a><a href="#questions">Questions</a>
@@ -51,7 +58,7 @@
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy wrap">
-        <p class="eyebrow"><span class="little-notch" aria-hidden="true"></span> A little workspace. Right up there.</p>
+        <p class="eyebrow"><img class="eyebrow-symbol" src="assets/heynotch-symbol.png?v=brand-1" width="256" height="256" alt="" decoding="async"> A little workspace. Right up there.</p>
         <h1 id="hero-title">A little more <span>Mac.</span></h1>
         <p class="hero-description">Your tasks, music, words, and meetings.<br>Right where your Mac leaves a little room.</p>
         <div class="hero-actions"><a class="button" href="#get-started" data-get>Get HeyNotch <svg class="icon"><use href="#i-arrow"/></svg></a><a class="text-link" href="#demo">Take a little look <svg class="icon"><use href="#i-down"/></svg></a></div>
@@ -73,10 +80,10 @@
                 <div class="wallpaper" aria-hidden="true"><div class="wallpaper-fold fold-one"></div><div class="wallpaper-fold fold-two"></div><div class="wallpaper-fold fold-three"></div></div>
                 <div class="desktop-menu" aria-hidden="true"><span class="desktop-menu-left"><b>◈</b><strong>Finder</strong><span>File</span><span>Edit</span><span>View</span></span><span>◒ &nbsp; ◉ &nbsp; Thu 9:41</span></div>
                 <div class="desktop-note" aria-hidden="true"><div class="window-dots"><i></i><i></i><i></i></div><span class="note-eyebrow">A NOTE TO SELF</span><p>Make room<br>for a good idea.</p><span class="note-rule"></span><small>The little things add up.</small></div>
-                <div class="desktop-dock" aria-hidden="true"><i class="dock-finder">↔</i><i class="dock-notes">≡</i><i class="dock-calendar">5</i><i class="dock-music">♪</i><i class="dock-notch"><span></span></i><i class="dock-terminal">›_</i></div>
+                <div class="desktop-dock" aria-hidden="true"><i class="dock-finder">↔</i><i class="dock-notes">≡</i><i class="dock-calendar">5</i><i class="dock-music">♪</i><i class="dock-notch"><img src="assets/heynotch-symbol.png?v=brand-1" width="256" height="256" alt="" decoding="async"></i><i class="dock-terminal">›_</i></div>
 
                 <div class="notch-app" aria-label="Interactive HeyNotch sample workspace">
-                  <div class="notch-toolbar"><span><span class="notch-mini-mark" aria-hidden="true"></span>HeyNotch</span><span class="screen-demo-label">BROWSER PREVIEW</span></div>
+                  <div class="notch-toolbar"><span><img class="toolbar-symbol" src="assets/heynotch-symbol.png?v=brand-1" width="256" height="256" alt="" decoding="async">HeyNotch</span><span class="screen-demo-label">BROWSER PREVIEW</span></div>
                   <div id="panel-tasks" class="demo-panel" role="tabpanel" aria-labelledby="tab-tasks" tabindex="0">
                     <div class="panel-heading"><h2>Your next little thing.</h2><span class="screen-list">Work <span aria-hidden="true">⌄</span></span></div>
                     <div class="kanban" id="demo-board">
@@ -146,10 +153,10 @@
       <details><summary>Is HeyNotch an Apple app?<span class="faq-plus" aria-hidden="true"></span></summary><div><p>HeyNotch is an independent, personal fork of boring.notch. It is open source under GPL-3.0 and is not affiliated with Apple. macOS and MacBook are Apple trademarks.</p></div></details>
     </div></section>
 
-    <section id="get-started" class="closing-section reveal"><div class="wrap" data-reveal><span class="closing-mark brand-mark" aria-hidden="true"><i></i></span><h2>A little addition.<br>A familiar feeling.</h2><p>Make a little more of your Mac.</p><a class="button" href="https://github.com/WOLFIEEEE/HeyNotch" data-get>Get HeyNotch <svg class="icon"><use href="#i-arrow"/></svg></a><span class="closing-note">Development preview · Open source</span><a class="closing-source" href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Explore project source ↗</a></div></section>
+    <section id="get-started" class="closing-section reveal"><div class="wrap" data-reveal><img class="closing-symbol" src="assets/heynotch-symbol.png?v=brand-1" width="256" height="256" alt="" loading="lazy" decoding="async"><h2>A little addition.<br>A familiar feeling.</h2><p>Make a little more of your Mac.</p><a class="button" href="https://github.com/WOLFIEEEE/HeyNotch" data-get>Get HeyNotch <svg class="icon"><use href="#i-arrow"/></svg></a><span class="closing-note">Development preview · Open source</span><a class="closing-source" href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Explore project source ↗</a></div></section>
   </main>
 
-  <footer class="site-footer wrap"><a class="brand" href="#" aria-label="HeyNotch home"><span class="brand-mark" aria-hidden="true"><i></i></span>HeyNotch<span class="brand-period">.</span></a><p>A personal fork of boring.notch.<br>Made independently. Shared under GPL-3.0.</p><a href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Find it on GitHub <span aria-hidden="true">↗</span></a><span class="footer-small">A little more, thoughtfully.</span></footer>
+  <footer class="site-footer wrap"><a class="brand" href="#" aria-label="HeyNotch home"><img class="brand-wordmark" src="assets/heynotch-wordmark.png?v=brand-1" width="600" height="192" alt="HeyNotch" decoding="async"></a><p>A personal fork of boring.notch.<br>Made independently. Shared under GPL-3.0.</p><a href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Find it on GitHub <span aria-hidden="true">↗</span></a><span class="footer-small">A little more, thoughtfully.</span></footer>
 
   <dialog id="get-dialog" class="get-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description"><button class="dialog-close" aria-label="Close preview information"><svg class="icon"><use href="#i-close"/></svg></button><span class="dialog-label"><i></i>DEVELOPMENT PREVIEW</span><h2 id="dialog-title">A little work<br>in progress.</h2><p id="dialog-description">HeyNotch is a preview build. There isn’t a public installer on this page yet.</p><p>These previews show the version in development. The public source may not include every preview feature yet. Explore the project and follow along as it takes shape.</p><a class="button" href="https://github.com/WOLFIEEEE/HeyNotch" target="_blank" rel="noopener noreferrer">Explore project source <span aria-hidden="true">↗</span></a><div class="dialog-footnote">For macOS. Open source under GPL-3.0.<br>This website’s demos use sample data only.</div></dialog>
 </body>

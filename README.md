@@ -69,12 +69,39 @@ wheel or touch input. Visual changes are coalesced into animation frames only
 while needed; offscreen and background scenes stop moving. Reduced Motion removes
 the decorative movement and smooth scrolling. See `DESIGN.md` for motion choices.
 
+## Approved branding
+
+The header and footer use the approved HeyNotch wordmark. The same blue H-notch
+symbol appears in the hero eyebrow, sample app toolbar and dock, closing section,
+browser favicon, and home-screen icon. Images have explicit dimensions and the
+wordmark has a text alternative; repeated symbols are decorative.
+
+The app checkout retains the approved transparent masters under `design/brand/`.
+The website contains smaller PNG derivatives, preserving the artwork's shape and
+color. The macOS ImageIO packaging script trims only fully transparent outer
+padding, scales proportionally, and adds transparent padding for square icons:
+
+```sh
+swift scripts/prepare-brand-assets.swift /path/to/approved/brand dist
+sips -z 630 1200 /path/to/approved/brand/heynotch-social-v1.png --out dist/social.png
+```
+
+This script requires macOS but is **not** part of the hosting build. Generated
+assets are committed with the website; GitHub Pages serves them directly. The
+1200 × 630 social image is supplied separately. The brand assets are raster PNGs,
+not vector masters, and the smallest favicon retains the detail available in the
+approved raster artwork. Version the image URLs when replacing them. Validation
+checks PNG dimensions, alternatives, the sharing metadata, removed legacy logo
+assets, and a 2 MB maximum for the complete static artifact.
+
 ## Files and license
 
 - `dist/index.html`: content, accessible demo, FAQ and preview dialog.
 - `dist/style.css`: responsive layout, CSS laptop and motion.
 - `dist/app.js`: demo controls, navigation, reveals and scene movement.
-- `dist/favicon.svg`, `dist/social.svg`: original artwork.
+- `dist/assets/heynotch-wordmark.png`, `dist/assets/heynotch-symbol.png`: web-sized derivatives of the approved v1 logo.
+- `dist/favicon-32.png`, `dist/favicon-192.png`, `dist/apple-touch-icon.png`: approved symbol packaged for browser and home-screen use.
+- `dist/social.png`: 1200 × 630 sharing artwork using the approved logo.
 - `.github/workflows/pages.yml`: GitHub Pages publishing.
 - `tests/`, `scripts/`: verification without installed dependencies.
 

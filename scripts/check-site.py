@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Check that the static artifact is complete under the GitHub Pages project path."""
+"""Check the static artifact, approved brand images, and GitHub Pages project paths."""
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 import re
+import struct
 
 ROOT = Path(__file__).resolve().parents[1] / "dist"
 ORIGIN = "https://wolfieeee.github.io/HeyNotch/"
@@ -14,6 +15,9 @@ class Page(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.ids = set()
         self.references = []
+        self.aria_references = []
+        self.images = []
+        self.icons = []
         self.metadata = {}
 
     def handle_starttag(self, tag, attrs):
@@ -24,18 +28,56 @@ class Page(HTMLParser):
         for key in ("href", "src"):
             if attrs.get(key):
                 self.references.append((tag, key, attrs[key]))
+        for key in ("aria-controls", "aria-labelledby", "aria-describedby"):
+            self.aria_references.extend(attrs.get(key, "").split())
+        if tag == "img":
+            assert "alt" in attrs, f"Missing image alternative: {attrs.get('src')}"
+            assert attrs.get("width", "").isdigit() and attrs.get("height", "").isdigit(), "Images need stable dimensions"
+            assert int(attrs["width"]) > 0 and int(attrs["height"]) > 0
+            self.images.append(attrs)
         if tag == "meta":
             self.metadata[attrs.get("property", attrs.get("name"))] = attrs.get("content")
         if tag == "link" and attrs.get("rel") == "canonical":
             self.metadata["canonical"] = attrs.get("href")
+        if tag == "link" and attrs.get("rel") in ("icon", "apple-touch-icon"):
+            self.icons.append(attrs)
+
+
+def artifact_path(value):
+    """Resolve versioned image/CSS/script URLs without dropping the project prefix."""
+    parsed = urlsplit(value)
+    assert not value.startswith("/"), f"Root-relative asset breaks project path: {value}"
+    target = urlsplit(urljoin(ORIGIN, value))
+    assert target.scheme == "https" and target.netloc == urlsplit(ORIGIN).netloc, value
+    assert target.path.startswith("/HeyNotch/"), f"Asset escapes project: {value}"
+    relative = unquote(target.path.removeprefix("/HeyNotch/"))
+    assert ".." not in Path(relative).parts, f"Asset traversal: {value}"
+    file = ROOT / relative
+    assert file.is_file(), f"Missing local asset: {value}"
+    return file
+
+
+def png_size(file):
+    data = file.read_bytes()
+    assert data[:8] == b"\x89PNG\r\n\x1a\n" and data[12:16] == b"IHDR", f"Invalid PNG: {file}"
+    return struct.unpack(">II", data[16:24])
 
 
 page = Page()
-page.feed((ROOT / "index.html").read_text())
+html = (ROOT / "index.html").read_text()
+page.feed(html)
 assert page.metadata["canonical"] == ORIGIN
 assert page.metadata["og:url"] == ORIGIN
-assert page.metadata["og:image"] == ORIGIN + "social.svg"
+social_url = page.metadata["og:image"]
+assert social_url.startswith(ORIGIN + "social.png?") and urlsplit(social_url).query, "Social artwork must be versioned"
+assert page.metadata["twitter:image"] == social_url
+assert page.metadata["og:image:type"] == "image/png"
+assert (page.metadata["og:image:width"], page.metadata["og:image:height"]) == ("1200", "630")
+assert page.metadata["og:image:alt"] and page.metadata["twitter:image:alt"]
+assert png_size(artifact_path(social_url)) == (1200, 630)
 assert (ROOT / ".nojekyll").is_file()
+for target in page.aria_references:
+    assert target in page.ids, f"Missing ARIA target: {target}"
 for tag, attribute, value in page.references:
     if value.startswith("#"):
         assert not value[1:] or value[1:] in page.ids, f"Broken anchor: {value}"
@@ -46,11 +88,21 @@ for tag, attribute, value in page.references:
         assert tag in ("a", "link"), f"External runtime asset: {value}"
         assert value.startswith((ORIGIN, "https://github.com/WOLFIEEEE/HeyNotch")), value
         continue
-    assert not value.startswith("/"), f"Root-relative asset breaks project path: {value}"
-    target = urlsplit(urljoin(ORIGIN, value))
-    assert target.path.startswith("/HeyNotch/"), f"Asset escapes project: {value}"
-    file = ROOT / unquote(target.path.removeprefix("/HeyNotch/"))
-    assert file.is_file(), f"Missing local asset: {value}"
+    artifact_path(value)
+
+for attrs in page.images:
+    file = artifact_path(attrs["src"])
+    assert png_size(file) == (int(attrs["width"]), int(attrs["height"])), f"Image dimensions mismatch: {file}"
+    assert urlsplit(attrs["src"]).query, f"Brand image needs a version: {file}"
+for attrs in page.icons:
+    file = artifact_path(attrs["href"])
+    width, height = png_size(file)
+    assert attrs["sizes"] == f"{width}x{height}", f"Icon size mismatch: {file}"
+    assert urlsplit(attrs["href"]).query, f"Icon needs a version: {file}"
+assert {(a["rel"], a["sizes"]) for a in page.icons} == {
+    ("icon", "32x32"), ("icon", "192x192"), ("apple-touch-icon", "180x180")
+}
+assert sum(a.get("class") == "brand-wordmark" and a["alt"] == "HeyNotch" for a in page.images) == 2
 
 files = list(ROOT.rglob("*"))
 for file in files:
@@ -59,8 +111,11 @@ for file in files:
         content = file.read_text()
         assert "remotemars.chatgpt.site" not in content, f"Retired host in {file}"
         assert not re.search(r"(?:sk-ant-|sk-proj-|gh[pousr]_)[A-Za-z0-9_-]{16,}", content), f"Possible credential in {file}"
+        assert not re.search(r"\b(?:brand-mark|brand-period|little-notch|notch-mini-mark|closing-mark)\b", content), f"Retired logo in {file}"
         if file.suffix == ".css":
             assert not re.search(r"@import\b|url\(\s*['\"]?(?:https?:|//|/)", content), "External or root-relative CSS resource"
+assert not (ROOT / "favicon.svg").exists() and not (ROOT / "social.svg").exists(), "Remove retired logo assets"
 
 size = sum(f.stat().st_size for f in files if f.is_file())
-print(f"PASS: GitHub Pages metadata, {len(page.references)} links/assets, {len(page.ids)} unique IDs; {size:,} byte artifact")
+assert size <= 2_000_000, f"Static artifact exceeds the 2 MB image budget: {size:,} bytes"
+print(f"PASS: GitHub Pages metadata, {len(page.references)} links/assets, {len(page.ids)} unique IDs, {len(page.images)} brand images; {size:,} byte artifact")
