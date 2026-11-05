@@ -34,6 +34,7 @@ cd "$repository_root"
 release_root="$repository_root/build/release-candidate"
 payload="$release_root/HeyNotch"
 app="$payload/HeyNotch.app"
+source_payload="$release_root/source"
 team="${RELEASE_TEAM_ID:-TVQX6QVQ7N}"
 mkdir -p "$release_root"
 
@@ -118,12 +119,12 @@ PY
 }
 
 verify_source_archive() {
-    python3 - "${1:-$payload}" <<'PYSOURCE'
+    python3 - "${1:-$source_payload}" "${2:-HeyNotch-source.tar.gz}" <<'PYSOURCE'
 import hashlib, json, os, pathlib, sys, tarfile
 root = pathlib.Path(sys.argv[1])
 state = json.loads((root / 'SOURCE_STATE.json').read_text())
 expected = {'HeyNotch-source/' + name: record for name, record in state['files'].items()}
-with tarfile.open(root / 'HeyNotch-source.tar.gz', 'r:gz') as archive:
+with tarfile.open(root / sys.argv[2], 'r:gz') as archive:
     members = archive.getmembers()
     if len(members) != len(expected) or {member.name for member in members} != set(expected):
         raise SystemExit('Source archive entries do not match SOURCE_STATE.json.')
@@ -143,6 +144,8 @@ PYSOURCE
 
 verify_payload() {
     test -f "$release_root/payload-state.json" || fail "Payload integrity record is missing."
+    test ! -e "$payload/HeyNotch-source.tar.gz" || fail "Corresponding source must be a separate release asset, outside the notarization upload."
+    cmp -s "$source_payload/SOURCE_STATE.json" "$payload/SOURCE_STATE.json" || fail "Source and app payload manifests differ."
     payload_state "$release_root/payload-current.json"
     cmp -s "$release_root/payload-state.json" "$release_root/payload-current.json" || fail "Staged payload changed after packaging. Rebuild the candidate."
 }
@@ -150,6 +153,7 @@ verify_payload() {
 verify_app() {
     local checked_app="${1:-$app}"
     test -d "$checked_app" || fail "No staged app. Run build first."
+    python3 "$repository_root/scripts/release-signing.py" verify "$checked_app" "$team"
     codesign --verify --deep --strict --verbose=2 "$checked_app"
     python3 - "$checked_app" "$team" <<'PY'
 import pathlib, plistlib, subprocess, sys
@@ -198,7 +202,11 @@ verify_notarized() {
     payload_state "$release_root/notarized-current.json" "$final_root/HeyNotch"
     cmp -s "$final_root/payload-state.json" "$release_root/notarized-current.json" || fail "Notarized payload changed."
     verify_app "$final_root/HeyNotch/HeyNotch.app"
-    verify_source_archive "$final_root/HeyNotch"
+    local final_version final_build
+    final_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$final_root/HeyNotch/HeyNotch.app/Contents/Info.plist")"
+    final_build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$final_root/HeyNotch/HeyNotch.app/Contents/Info.plist")"
+    verify_source_archive "$final_root" "HeyNotch-$final_version-$final_build-source.tar.gz"
+    cmp -s "$final_root/SOURCE_STATE.json" "$final_root/HeyNotch/SOURCE_STATE.json" || fail "Final source and app manifests differ."
     xcrun stapler validate "$final_root/HeyNotch/HeyNotch.app"
     spctl --assess --type execute --verbose=2 "$final_root/HeyNotch/HeyNotch.app"
     (cd "$final_root" && shasum -a 256 -c SHA256SUMS.txt)
@@ -240,18 +248,26 @@ EOF
     cmp -s "$release_root/source-before.json" "$release_root/source-after.json" || fail "Source changed during the build. Rebuild from a stable checkout."
     mkdir "$payload"
     ditto "$derived/Build/Products/Release/HeyNotch.app" "$app"
+    python3 "$repository_root/scripts/release-signing.py" sign "$app" "$RELEASE_SIGNING_IDENTITY" "$team"
     verify_app
     cp LICENSE THIRD_PARTY_LICENSES "$payload/"
     cp "$release_root/source-after.json" "$payload/SOURCE_STATE.json"
-    python3 - "$repository_root" "$payload" <<'PY'
+    # Preserve the exact vendor/source bytes in a separate, equally accessible
+    # release asset. Apple recursively scans archives, including vendor test
+    # binaries that are source inputs rather than installed app components.
+    mkdir "$source_payload"
+    cp "$release_root/source-after.json" "$source_payload/SOURCE_STATE.json"
+    python3 - "$repository_root" "$source_payload" "$payload" <<'PY'
 import json, pathlib, sys, tarfile
-root, payload = map(pathlib.Path, sys.argv[1:])
-state = json.loads((payload / 'SOURCE_STATE.json').read_text())
-with tarfile.open(payload / 'HeyNotch-source.tar.gz', 'w:gz') as archive:
+root, source_payload, payload = map(pathlib.Path, sys.argv[1:])
+state = json.loads((source_payload / 'SOURCE_STATE.json').read_text())
+with tarfile.open(source_payload / 'HeyNotch-source.tar.gz', 'w:gz') as archive:
     for relative in state['files']:
         archive.add(root / relative, arcname='HeyNotch-source/' + relative, recursive=False)
 (payload / 'READ-ME.txt').write_text('HeyNotch — independent personal fork at WOLFIEEEE/HeyNotch.\n'
-    'GPL-3.0; licenses and corresponding source snapshot are included.\n'
+    'GPL-3.0; license notices and exact source manifest are included.\n'
+    'Download the exact corresponding source alongside this app, at no charge:\n'
+    'https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.0-preview.1/HeyNotch-2.8.0-272-source.tar.gz\n'
     'Move HeyNotch.app to Applications before configuring recording permissions.\n'
     'Automatic updates are disabled in this candidate.\n'
     'See docs/RELEASE_READINESS.md in the source for verification evidence and remaining release gates.\n')
@@ -268,7 +284,7 @@ elif [ "$command_name" = verify ]; then
     verify_source_archive
     test -f "$release_root/HeyNotch-CANDIDATE.zip" && test -f "$release_root/candidate.sha256" || fail "Candidate archive/checksum is missing."
     (cd "$release_root" && shasum -a 256 -c candidate.sha256)
-    test -f "$payload/HeyNotch-source.tar.gz" || fail "Corresponding source archive is missing."
+    test -f "$source_payload/HeyNotch-source.tar.gz" || fail "Corresponding source archive is missing."
     test -f "$payload/LICENSE" && test -f "$payload/THIRD_PARTY_LICENSES" || fail "License notices are missing."
     if [ -d "$release_root/notarized" ]; then verify_notarized; fi
     echo "Package integrity verification passed. Live-call and clean-install acceptance are separate."
@@ -375,11 +391,11 @@ PYLOG
     source_name="HeyNotch-$version-$build_number-source.tar.gz"
     payload_state "$stapling_root/payload-state.json" "$stapling_root/HeyNotch"
     ditto -c -k --sequesterRsrc --keepParent "$stapling_root/HeyNotch" "$stapling_root/$artifact_name"
-    cp "$payload/HeyNotch-source.tar.gz" "$stapling_root/$source_name"
+    cp "$source_payload/HeyNotch-source.tar.gz" "$stapling_root/$source_name"
     cp "$payload/SOURCE_STATE.json" "$stapling_root/SOURCE_STATE.json"
     # Release instructions come from the exact source packaged with this binary,
     # not whatever happens to be in the working tree on notarization day.
-    python3 - "$payload/HeyNotch-source.tar.gz" "$stapling_root" <<'PYNOTES'
+    python3 - "$source_payload/HeyNotch-source.tar.gz" "$stapling_root" <<'PYNOTES'
 import pathlib, sys, tarfile
 out = pathlib.Path(sys.argv[2])
 with tarfile.open(sys.argv[1], 'r:gz') as source:

@@ -33,7 +33,9 @@ The inherited notch features remain available:
 
 ## Getting started
 
-The **2.8.0 Preview 1** distribution is being prepared; no public installer is linked here yet. Read the [installation and first-run guide](docs/INSTALL.md) for the release requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
+For **2.8.0 Preview 1**, use the notarized app ZIP attached to the [matching release](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.0-preview.1). Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
+
+The release provides the notarized app ZIP and **`HeyNotch-2.8.0-272-source.tar.gz`** as separate downloads on the same release page. The app ZIP includes license notices, `SOURCE_STATE.json`, and a direct link to its matching source archive; the source is not nested inside the app ZIP.
 
 Open **Settings → Voice**, enable voice input, allow microphone access, and download/prepare a speech model. Compressed Turbo is the recommended multilingual option (about 648 MB); Base is a smaller option (about 149 MB). First preparation can take several minutes. Wait for **Ready**, then focus a text field in another app. Text insertion also needs Accessibility access.
 
@@ -111,7 +113,7 @@ This is a personal project. **Do not open pull requests to `TheBoredTeam/boring.
 
 ## License and credits
 
-HeyNotch is licensed under **GPL-3.0**, the same license as Boring Notch. See [LICENSE](LICENSE). Any distributed version must stay GPL-3.0 and include its source.
+HeyNotch is licensed under **GPL-3.0**, the same license as Boring Notch. See [LICENSE](LICENSE). Any distributed version must stay GPL-3.0 with its corresponding source available. HeyNotch releases provide the exact corresponding-source archive alongside the app ZIP on the same release page, with a direct source link and license notices in the app download.
 
 - Original project: [Boring Notch](https://github.com/TheBoredTeam/boring.notch) by TheBoredTeam and contributors
 - [MediaRemoteAdapter](https://github.com/ungive/mediaremote-adapter): universal Now Playing support; the bundled binary requires macOS 15+

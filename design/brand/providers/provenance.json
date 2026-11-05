@@ -18,8 +18,12 @@
       "sourceElement": "Complete first SVG element, inside the header span data-site-visibility-include=\"chatgpt-docs\". Copied verbatim, including original viewBox, paths and currentColor fill.",
       "sourcePageSHA256": "f7ff3c8089d6557a04bb1db38e4977a4ac545b687f102fe562973f1c0925069e",
       "guidelinesURL": "https://openai.com/brand/",
-      "usage": "Unchanged header Blossom SVG. Website displays original currentColor as black. Native asset uses its monochrome template intent and explicit black/light or white/dark foreground, matching the source currentColor behavior.",
-      "sha256": "468ebe03b0504e3e40be53e6c1f4b5b80c00d94ea4ad07b913ae41073638ae90"
+      "usage": "Original header Blossom SVG retained verbatim and used unchanged on the website. The native wrapper declares 64px width/height for native picker sizing; its monochrome template intent supplies black/light or white/dark foreground, matching the source currentColor behavior.",
+      "sha256": "468ebe03b0504e3e40be53e6c1f4b5b80c00d94ea4ad07b913ae41073638ae90",
+      "originalFile": "design/brand/providers/openai-developers-header.original.svg",
+      "nativeFile": "HeyNotch/Assets.xcassets/ProviderOpenAI.imageset/openai-developers-header.svg",
+      "nativeSHA256": "bc135473dc31a8126fd85672fbc6647e6d57da5388e9a97c307e27edd15206c2",
+      "nativeLayoutAdjustment": "Root width and height changed from 1em to 64px to provide native asset intrinsic dimensions. All other SVG bytes, including viewBox, path data, fill rules and currentColor fill, are identical to the retained original."
     },
     {
       "provider": "OpenRouter",

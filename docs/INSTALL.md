@@ -11,11 +11,13 @@ This guide applies to **HeyNotch 2.8.0 Preview 1**, app version **2.8.0 (272)**.
 ## Install
 
 1. Download the notarized ZIP from the matching HeyNotch preview release. Keep the normal browser download/security attributes intact.
-2. Open the ZIP and move **HeyNotch.app** from the HeyNotch folder into **Applications**. Keep the included license notices and corresponding-source archive available with your download.
+2. Open the ZIP and move **HeyNotch.app** from the HeyNotch folder into **Applications**. Keep the included license notices and `READ-ME.txt`; the latter links to the exact corresponding-source download for this release.
 3. Quit any older HeyNotch copy, then open the copy in Applications. macOS may ask you to confirm opening an app downloaded from the internet. The signing developer is **Khushwant Parihar**.
 4. If macOS says the app is damaged, has an unidentified developer, or cannot be verified, stop and check that the download came from the matching fork release. Do not disable Gatekeeper or remove quarantine as an installation step.
 
 There is no privileged installer, separate helper installation, or automatic updater. The signed MCP helper is inside the app bundle. Keep the app in Applications so permissions and MCP client paths remain stable.
+
+The corresponding source is a separate release asset, **`HeyNotch-2.8.0-272-source.tar.gz`**, alongside the app ZIP on the same release page. It is not nested inside the app ZIP and is not needed to run the app. Download it to inspect or build the exact source identified by the included `SOURCE_STATE.json`.
 
 ## First use
 
@@ -35,4 +37,4 @@ Automatic updates are disabled. To update, stop recording, save any needed trans
 
 ## Optional file verification
 
-`SHA256SUMS.txt` accompanies the release assets. Verify it from the folder containing those files with `shasum -a 256 -c SHA256SUMS.txt`. This checks download integrity; macOS Developer ID and notarization checks still apply. The included source snapshot and license notices describe exactly what was built.
+`SHA256SUMS.txt` accompanies the release assets and covers both the app ZIP and the separate source archive. Verify it from the folder containing all listed files with `shasum -a 256 -c SHA256SUMS.txt`. This checks download integrity; macOS Developer ID and notarization checks still apply. The separate source snapshot, matching `SOURCE_STATE.json`, and license notices describe exactly what was built.
