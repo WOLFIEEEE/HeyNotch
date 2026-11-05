@@ -255,23 +255,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupDragDetectorForScreen(_ screen: NSScreen) {
         guard let uuid = screen.displayUUID else { return }
         
-        let screenFrame = screen.frame
-        let notchHeight = openNotchSize.height
-        let notchWidth = openNotchSize.width
-        
-        // Create notch region at the top-center of the screen where an open notch would occupy
-        let notchRegion = CGRect(
-            x: screenFrame.midX - notchWidth / 2,
-            y: screenFrame.maxY - notchHeight,
-            width: notchWidth,
-            height: notchHeight
-        )
+        // Expanded detection helps approach the closed notch; it must not turn
+        // the entire future open panel into an invisible activation area.
+        let notchRegion = NotchDragPolicy.region(
+            screenFrame: screen.frame, closedSize: getClosedNotchSize(screenUUID: uuid))
         
         let detector = DragDetector(notchRegion: notchRegion)
         
-        detector.onDragEntersNotchRegion = { [weak self] in
-            Task { @MainActor in
-                self?.handleDragEntersNotchRegion(onScreen: screen)
+        detector.onDragEntersNotchRegion = { [weak self, weak detector] token in
+            Task { @MainActor [weak self, weak detector] in
+                guard let self, let detector, self.dragDetectors[uuid] === detector,
+                      detector.isCurrentEntry(token) else { return }
+                self.handleDragEntersNotchRegion(onScreen: screen)
             }
         }
         
@@ -280,12 +275,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func handleDragEntersNotchRegion(onScreen screen: NSScreen) {
-        guard Defaults[.heyShelf] else { return }
+        guard Defaults[.heyShelf], Defaults[.expandedDragDetection],
+              !isScreenLocked || Defaults[.showOnLockScreen] else { return }
         guard let uuid = screen.displayUUID else { return }
         
-        if Defaults[.showOnAllDisplays], let viewModel = viewModels[uuid] {
+        if Defaults[.showOnAllDisplays], let viewModel = viewModels[uuid],
+           let window = windows[uuid], window.isVisible, window.alphaValue > 0 {
             viewModel.open(page: .shelf)
-        } else if !Defaults[.showOnAllDisplays], let windowScreen = window?.screen, screen == windowScreen {
+        } else if !Defaults[.showOnAllDisplays], let window, window.isVisible, window.alphaValue > 0,
+                  screen == window.screen {
             vm.open(page: .shelf)
         }
     }
@@ -315,6 +313,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let size = viewModel.panelSize
                 let frame = NSRect(x: targetScreen.frame.midX - size.width / 2,
                                    y: targetScreen.frame.maxY - size.height, width: size.width, height: size.height)
+                guard window.frame != frame else { return }
                 window.setFrame(frame, display: true)
                 self.positionWindow(window, on: targetScreen)
             }.store(in: &viewModel.cancellables)

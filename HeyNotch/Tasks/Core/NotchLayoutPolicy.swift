@@ -30,6 +30,18 @@ enum NotchLandingPage: String, CaseIterable, Identifiable {
 /// Size is constrained by the display, not the old 190-point music panel.
 /// The board scrolls once it reaches its user-selected height ceiling.
 enum NotchLayoutPolicy {
+    /// Keep the native hosting window stable while SwiftUI opens/closes inside
+    /// it. Shrinking the NSWindow at close time clips the outgoing task board.
+    static func hostingSize(screenSize: CGSize, availableHeight: Double) -> CGSize {
+        let tasks = openSize(page: .tasks, tallestColumnCount: 5,
+                             screenWidth: Double(screenSize.width),
+                             availableHeight: availableHeight, maximumTaskHeight: 600)
+        let height = screenSize.height.isFinite ? max(1, screenSize.height) : 900
+        let width = screenSize.width.isFinite ? max(1, screenSize.width) : 832
+        return CGSize(width: min(width, tasks.width + 16),
+                      height: min(height, tasks.height + 20))
+    }
+
     static func openSize(page: NotchViews, tallestColumnCount: Int, screenWidth: Double,
                          availableHeight: Double, maximumTaskHeight: Double = 500) -> CGSize {
         let widthLimit = screenWidth.isFinite ? max(1, screenWidth - 32) : 800

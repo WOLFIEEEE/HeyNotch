@@ -1,10 +1,10 @@
-# Publish the first HeyNotch preview
+# Publish HeyNotch Preview 2
 
 This procedure is for **WOLFIEEEE/HeyNotch only**. It does not involve the upstream project. The website's `gh-pages` branch is independent of the app release.
 
 ## Prepare the source and identity
 
-1. Review and commit the app source, preserving GPL-3.0 and third-party notices. Use app/XPC version 2.8.0 and build 272. The release tag will be `v2.8.0-preview.1`.
+1. Review and commit the app source, preserving GPL-3.0 and third-party notices. Use app/XPC version 2.8.1 and build 273. The release tag will be `v2.8.1-preview.2`.
 2. Keep signing/notarization credentials in Keychain. If a team API key is downloaded, keep its `.p8` outside source or in ignored `build/private/`; run `scripts/setup-notarization.command` yourself to validate/store it as `HeyNotch-Notary`. API-key setup is the default; the optional Apple ID route is not required.
 3. Freeze edits, run the app/repository checks, then create a fresh candidate. Move an older `build/release-candidate` aside first; the script refuses to overwrite one.
 
@@ -24,7 +24,7 @@ The app ZIP contains HeyNotch.app, license notices, `SOURCE_STATE.json`, and `RE
 
 The final files are under `build/release-candidate/notarized/`. Test the final ZIP through a real browser download with normal quarantine; use a clean account or another Mac where possible. Move the extracted app to Applications, launch normally, and confirm the nested MCP helper, Keychain access, model preparation, and identity-bound permissions. Also check first launch from Downloads/translocation and a later launch. Do not turn off Gatekeeper or strip quarantine to make this check pass.
 
-A locally signed build or an Apple Accepted result alone does not establish this acceptance. Record the tested system and hardware. Keep the outstanding live-call, notification, provider, and hardware limits visible in prerelease notes.
+A locally signed build or an Apple Accepted result alone does not establish interactive installation or feature acceptance. Record the tested system and hardware. If interactive testing is unavailable for a maintenance preview, disclose that limit alongside the exact signed/notarized artifact checks; never carry forward a previous version’s interactive result as a new pass. Keep the outstanding live-call, notification, provider, and hardware limits visible in prerelease notes.
 
 ## Prepare the GitHub release
 
@@ -32,24 +32,24 @@ Create the tag from the **reviewed source commit recorded in SOURCE_STATE.json**
 
 Attach these files from the final directory:
 
-- `HeyNotch-2.8.0-272-notarized.zip`
-- `HeyNotch-2.8.0-272-source.tar.gz`
+- `HeyNotch-2.8.1-273-notarized.zip`
+- `HeyNotch-2.8.1-273-source.tar.gz`
 - `SOURCE_STATE.json`
 - `SHA256SUMS.txt`
 - `INSTALL.md`
 - `RELEASE_NOTES.md`
 
-Publish the app ZIP and **`HeyNotch-2.8.0-272-source.tar.gz` together on this same release**, with the same download access. Before publishing, confirm that the source link in the app ZIP's `READ-ME.txt` names this tag and source asset, both `SOURCE_STATE.json` copies agree, and the source archive matches that manifest. Do not publish the app ZIP alone or substitute GitHub's automatically generated source archive for this verified corresponding-source asset.
+Publish the app ZIP and **`HeyNotch-2.8.1-273-source.tar.gz` together on this same release**, with the same download access. Before publishing, confirm that the source link in the app ZIP's `READ-ME.txt` names this tag and source asset, both `SOURCE_STATE.json` copies agree, and the source archive matches that manifest. Do not publish the app ZIP alone or substitute GitHub's automatically generated source archive for this verified corresponding-source asset.
 
 Use `RELEASE_NOTES.md` as the release description. The following creates a **draft prerelease** only after the matching tag has been pushed:
 
 ```sh
-gh release create v2.8.0-preview.1 \
+gh release create v2.8.1-preview.2 \
   --repo WOLFIEEEE/HeyNotch --verify-tag --draft --prerelease \
-  --title 'HeyNotch 2.8.0 Preview 1' \
+  --title 'HeyNotch 2.8.1 Preview 2' \
   --notes-file build/release-candidate/notarized/RELEASE_NOTES.md \
-  build/release-candidate/notarized/HeyNotch-2.8.0-272-notarized.zip \
-  build/release-candidate/notarized/HeyNotch-2.8.0-272-source.tar.gz \
+  build/release-candidate/notarized/HeyNotch-2.8.1-273-notarized.zip \
+  build/release-candidate/notarized/HeyNotch-2.8.1-273-source.tar.gz \
   build/release-candidate/notarized/SOURCE_STATE.json \
   build/release-candidate/notarized/SHA256SUMS.txt \
   build/release-candidate/notarized/INSTALL.md \

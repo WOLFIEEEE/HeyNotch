@@ -23,13 +23,14 @@ let tabs = [
 
 struct TabSelectionView: View {
     @ObservedObject var coordinator = HeyViewCoordinator.shared
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Default(.heyShelf) private var shelfEnabled
     @Namespace var animation
     var body: some View {
         HStack(spacing: 0) {
             ForEach(tabs.filter { $0.view != .shelf || shelfEnabled }) { tab in
                     TabButton(label: tab.label, icon: tab.icon, selected: coordinator.currentView == tab.view) {
-                        withAnimation(.smooth) {
+                        withAnimation(reduceMotion ? nil : .smooth) {
                             coordinator.currentView = tab.view
                         }
                     }
@@ -38,13 +39,8 @@ struct TabSelectionView: View {
                     .background {
                         if tab.view == coordinator.currentView {
                             Capsule()
-                                .fill(coordinator.currentView == tab.view ? Color(nsColor: .secondarySystemFill) : Color.clear)
+                                .fill(Color(nsColor: .secondarySystemFill))
                                 .matchedGeometryEffect(id: "capsule", in: animation)
-                        } else {
-                            Capsule()
-                                .fill(coordinator.currentView == tab.view ? Color(nsColor: .secondarySystemFill) : Color.clear)
-                                .matchedGeometryEffect(id: "capsule", in: animation)
-                                .hidden()
                         }
                     }
             }

@@ -186,22 +186,14 @@ class HeyViewModel: NSObject, ObservableObject {
     }
     
     func isMouseHovering(position: NSPoint = NSEvent.mouseLocation) -> Bool {
-        let screenFrame = getScreenFrame(screenUUID)
-        if let frame = screenFrame {
-            
-            let baseY = frame.maxY - notchSize.height
-            let baseX = frame.midX - notchSize.width / 2
-            
-            return position.y >= baseY && position.y <= frame.maxY && position.x >= baseX && position.x <= baseX + notchSize.width
-        }
-        
-        return false
+        guard let frame = getScreenFrame(screenUUID) else { return false }
+        return NotchInteractionGeometry.contains(point: position, screenFrame: frame, size: notchSize)
     }
 
     var panelSize: CGSize {
         let screen = screenUUID.flatMap { NSScreen.screen(withUUID: $0) } ?? NSScreen.main
-        return CGSize(width: min(max(windowSize.width, notchSize.width), max(1, (screen?.frame.width ?? 816) - 16)),
-                      height: min(max(windowSize.height, notchSize.height + shadowPadding), screen?.frame.height ?? 900))
+        return NotchLayoutPolicy.hostingSize(screenSize: screen?.frame.size ?? CGSize(width: 832, height: 900),
+                                            availableHeight: Double(screen?.visibleFrame.height ?? 700))
     }
 
     func refreshOpenSize(resetHeight: Bool = false) {
