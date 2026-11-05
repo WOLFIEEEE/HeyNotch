@@ -1,0 +1,24 @@
+# Synthetic task-store queries only; not UI frame timing or real reminders.
+# OS=Version 27.0.1 (Build 26A434); CPUs=11; calendar=gregorian; locale=en_US@rg=inzzzz; zone=Asia/Kolkata
+# Actual TaskBoardStore is compiled unmodified; prototype is local to this harness.
+# Queries=3: one read per lane. Queries=15: four body reads plus one height read per lane; modeled source workload, not measured SwiftUI evaluations.
+variant,total_reminders,selected_reminders,queries_per_sample,samples,median_ms,mean_ms,max_ms
+production,100,60,3,5,1.729458,1.730450,1.741459
+prototype-cold,100,60,3,5,0.136625,0.137742,0.140291
+prototype-warm,100,60,3,5,0.003042,0.003025,0.003042
+production,100,60,15,5,7.659417,7.837650,8.601292
+prototype-cold,100,60,15,5,0.149791,0.149333,0.152583
+prototype-warm,100,60,15,5,0.015000,0.014950,0.015333
+production,1000,600,3,5,13.952042,13.857850,13.998750
+prototype-cold,1000,600,3,5,1.489542,1.497791,1.532500
+prototype-warm,1000,600,3,5,0.002667,0.002692,0.002792
+production,1000,600,15,5,68.929333,69.188900,71.886666
+prototype-cold,1000,600,15,5,1.487833,1.525158,1.656667
+prototype-warm,1000,600,15,5,0.013125,0.014350,0.018542
+production,5000,3000,3,5,93.897625,93.990633,94.729208
+prototype-cold,5000,3000,3,5,11.001375,11.011458,11.275958
+prototype-warm,5000,3000,3,5,0.002833,0.002841,0.003041
+production,5000,3000,15,5,466.183083,468.359592,474.799042
+prototype-cold,5000,3000,15,5,11.262209,11.140167,11.415875
+prototype-warm,5000,3000,15,5,0.014459,0.014450,0.014750
+# checksum=399942; full reminder-value equality passed for every size/column

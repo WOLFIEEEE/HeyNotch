@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Structural smoke tests for the nightly release pipeline.
+"""Regression checks for the archived release pipeline.
 
-The workflows cannot execute under unit test; these checks pin the nightly
+These workflows are disabled outside .github/workflows; these checks pin the nightly
 rolling-release invariants (fixed tag/asset/title, attestation, signed API
 commits) and the shared derive-don't-reserve build-number scheme that
 stable/beta follow too.
@@ -18,16 +18,16 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 
 class WorkflowSmokeTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.release = (REPOSITORY_ROOT / ".github" / "workflows" / "release.yml").read_text(
+        self.release = (REPOSITORY_ROOT / ".github" / "disabled-workflows" / "release.yml").read_text(
             encoding="utf-8"
         )
-        self.nightly = (REPOSITORY_ROOT / ".github" / "workflows" / "nightly.yml").read_text(
+        self.nightly = (REPOSITORY_ROOT / ".github" / "disabled-workflows" / "nightly.yml").read_text(
             encoding="utf-8"
         )
         self.build_reusable = (
-            REPOSITORY_ROOT / ".github" / "workflows" / "build_reusable.yml"
+            REPOSITORY_ROOT / ".github" / "disabled-workflows" / "build_reusable.yml"
         ).read_text(encoding="utf-8")
-        self.manual_build = (REPOSITORY_ROOT / ".github" / "workflows" / "manual_build.yml").read_text(
+        self.manual_build = (REPOSITORY_ROOT / ".github" / "disabled-workflows" / "manual_build.yml").read_text(
             encoding="utf-8"
         )
 
@@ -307,7 +307,7 @@ class WorkflowSmokeTests(unittest.TestCase):
         for removed in ("immutable", ".immutable", "immutable-release"):
             self.assertNotIn(removed, self.nightly)
 
-    def test_built_product_is_named_boring_notch(self) -> None:
+    def test_built_product_is_named_heynotch(self) -> None:
         # The Xcode product and app bundle are "HeyNotch", while the public
         # DMG keeps the legacy HeyNotch.dmg name for download/appcast
         # compatibility. The project/target/scheme remain HeyNotch.
@@ -337,7 +337,7 @@ class WorkflowSmokeTests(unittest.TestCase):
         self.assertIn("/${PROJECT_NAME}.dmg", self.release)
         self.assertIn('app "HeyNotch.app"', self.release)
         self.assertNotIn("Boring%20Notch.dmg", self.release)
-        self.assertNotIn('app "HeyNotch.app"', self.release)
+        self.assertNotIn('app "Boring Notch.app"', self.release)
 
         # Nightly: downloads the compatibility artifact, then renames it to the
         # fixed rolling asset name (which is intentionally unchanged).

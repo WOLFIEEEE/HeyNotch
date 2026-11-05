@@ -1,0 +1,718 @@
+{
+  "recorded_on": "2026-11-05",
+  "base_commit": "8278c60dacb5b0c6f9f2783b8c305c692104ff60",
+  "working_tree_changes": true,
+  "before_store_sha256": "eeffaeea3e5c7e7f69a4d7b7f333448027931483916023ba7c4ad7a529474b26",
+  "after_source_sha256": {
+    "HeyNotch/Tasks/Core/TaskModels.swift": "dabde43a16e5e6ac53144b27d426116148d3c8b47e60f8cb8b244ac1ef9166b1",
+    "HeyNotch/Tasks/Core/TaskDateParser.swift": "c17b1aeb9d74f547c493145ccf8b7b5b026a7eabb024da26dbdc55226a96687c",
+    "HeyNotch/Tasks/Core/TaskKanbanModels.swift": "ed40be6191fa0206d68f488a53210401d972f1b007d94cb316ec8784bc802878",
+    "HeyNotch/Tasks/Core/TaskBoardStore.swift": "b4f1e3da82f3bd25ab295b4f55025fedd64e83a026f4cf5b7938358d3c8149b0",
+    "HeyNotch/Processing/Core/ProcessingModels.swift": "6665b4cc81ba4280fbc1e1ebdbf277ae4d27fe2a3f9fe42a080a72411ba9a4f9",
+    "docs/testing/TaskBoardBenchmark.swift": "b645b117677979fc09ce42e22635a73a0ffcaaaca73c12d4cdfd805cf34abe98"
+  },
+  "environment": {
+    "os": "macOS Version 27.0.1 (Build 26A434)",
+    "architecture": "arm64",
+    "active_cpu_count": 11,
+    "calendar": "gregorian",
+    "locale": "en_US@rg=inzzzz",
+    "time_zone": "Asia/Kolkata"
+  },
+  "method": {
+    "compiler_flags": [
+      "-O",
+      "-whole-module-optimization",
+      "-parse-as-library"
+    ],
+    "samples_per_case": 5,
+    "selected_list_fraction": 0.6,
+    "p95": "nearest rank; with five samples this is the observed maximum",
+    "actual_store_state": "warm; refresh and equality/warm-up checks run before timing",
+    "units": "milliseconds per synthetic query workload; not rendering or frame timing",
+    "model_workloads": {
+      "3": "one query per column",
+      "15": "four lane-body source references plus one layout count per column; actual SwiftUI evaluation frequency was not measured"
+    }
+  },
+  "verification": {
+    "full_reminder_values_and_order_match": true,
+    "checksum_before": 399942,
+    "checksum_after": 399942,
+    "task_tests_passed": 29,
+    "new_projection_tests": 8
+  },
+  "before": [
+    {
+      "variant": "production",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 1.729458,
+      "mean_ms": 1.73045,
+      "max_ms": 1.741459,
+      "p95_ms": 1.741459
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.136625,
+      "mean_ms": 0.137742,
+      "max_ms": 0.140291,
+      "p95_ms": 0.140291
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.003042,
+      "mean_ms": 0.003025,
+      "max_ms": 0.003042,
+      "p95_ms": 0.003042
+    },
+    {
+      "variant": "production",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 7.659417,
+      "mean_ms": 7.83765,
+      "max_ms": 8.601292,
+      "p95_ms": 8.601292
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.149791,
+      "mean_ms": 0.149333,
+      "max_ms": 0.152583,
+      "p95_ms": 0.152583
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.015,
+      "mean_ms": 0.01495,
+      "max_ms": 0.015333,
+      "p95_ms": 0.015333
+    },
+    {
+      "variant": "production",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 13.952042,
+      "mean_ms": 13.85785,
+      "max_ms": 13.99875,
+      "p95_ms": 13.99875
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 1.489542,
+      "mean_ms": 1.497791,
+      "max_ms": 1.5325,
+      "p95_ms": 1.5325
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.002667,
+      "mean_ms": 0.002692,
+      "max_ms": 0.002792,
+      "p95_ms": 0.002792
+    },
+    {
+      "variant": "production",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 68.929333,
+      "mean_ms": 69.1889,
+      "max_ms": 71.886666,
+      "p95_ms": 71.886666
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 1.487833,
+      "mean_ms": 1.525158,
+      "max_ms": 1.656667,
+      "p95_ms": 1.656667
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.013125,
+      "mean_ms": 0.01435,
+      "max_ms": 0.018542,
+      "p95_ms": 0.018542
+    },
+    {
+      "variant": "production",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 93.897625,
+      "mean_ms": 93.990633,
+      "max_ms": 94.729208,
+      "p95_ms": 94.729208
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 11.001375,
+      "mean_ms": 11.011458,
+      "max_ms": 11.275958,
+      "p95_ms": 11.275958
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.002833,
+      "mean_ms": 0.002841,
+      "max_ms": 0.003041,
+      "p95_ms": 0.003041
+    },
+    {
+      "variant": "production",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 466.183083,
+      "mean_ms": 468.359592,
+      "max_ms": 474.799042,
+      "p95_ms": 474.799042
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 11.262209,
+      "mean_ms": 11.140167,
+      "max_ms": 11.415875,
+      "p95_ms": 11.415875
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.014459,
+      "mean_ms": 0.01445,
+      "max_ms": 0.01475,
+      "p95_ms": 0.01475
+    }
+  ],
+  "after": [
+    {
+      "variant": "production",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.011791,
+      "mean_ms": 0.013358,
+      "max_ms": 0.0205,
+      "p95_ms": 0.0205
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.307833,
+      "mean_ms": 0.293408,
+      "max_ms": 0.315709,
+      "p95_ms": 0.315709
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.006834,
+      "mean_ms": 0.006517,
+      "max_ms": 0.007125,
+      "p95_ms": 0.007125
+    },
+    {
+      "variant": "production",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.051792,
+      "mean_ms": 0.051958,
+      "max_ms": 0.053084,
+      "p95_ms": 0.053084
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.282792,
+      "mean_ms": 0.283192,
+      "max_ms": 0.284833,
+      "p95_ms": 0.284833
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 100,
+      "selected_reminders": 60,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.030084,
+      "mean_ms": 0.030175,
+      "max_ms": 0.03075,
+      "p95_ms": 0.03075
+    },
+    {
+      "variant": "production",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.007042,
+      "mean_ms": 0.007617,
+      "max_ms": 0.011709,
+      "p95_ms": 0.011709
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 2.202208,
+      "mean_ms": 2.142058,
+      "max_ms": 2.419875,
+      "p95_ms": 2.419875
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.00425,
+      "mean_ms": 0.004033,
+      "max_ms": 0.004625,
+      "p95_ms": 0.004625
+    },
+    {
+      "variant": "production",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.035542,
+      "mean_ms": 0.035392,
+      "max_ms": 0.036791,
+      "p95_ms": 0.036791
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 2.109833,
+      "mean_ms": 2.11515,
+      "max_ms": 2.282833,
+      "p95_ms": 2.282833
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 1000,
+      "selected_reminders": 600,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.020417,
+      "mean_ms": 0.020292,
+      "max_ms": 0.02075,
+      "p95_ms": 0.02075
+    },
+    {
+      "variant": "production",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.004917,
+      "mean_ms": 0.004792,
+      "max_ms": 0.005084,
+      "p95_ms": 0.005084
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 10.403584,
+      "mean_ms": 10.604892,
+      "max_ms": 11.187833,
+      "p95_ms": 11.187833
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 3,
+      "samples": 5,
+      "median_ms": 0.002708,
+      "mean_ms": 0.002758,
+      "max_ms": 0.002917,
+      "p95_ms": 0.002917
+    },
+    {
+      "variant": "production",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.023209,
+      "mean_ms": 0.023192,
+      "max_ms": 0.023916,
+      "p95_ms": 0.023916
+    },
+    {
+      "variant": "prototype-cold",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 10.484333,
+      "mean_ms": 10.467775,
+      "max_ms": 10.601334,
+      "p95_ms": 10.601334
+    },
+    {
+      "variant": "prototype-warm",
+      "total_reminders": 5000,
+      "selected_reminders": 3000,
+      "queries_per_sample": 15,
+      "samples": 5,
+      "median_ms": 0.013958,
+      "mean_ms": 0.013967,
+      "max_ms": 0.014167,
+      "p95_ms": 0.014167
+    }
+  ],
+  "actual_cold_measurement": {
+    "harness_sha256": "20096b4392a6f3b48c031ca155febac0fb92c497e1bcc1bf653c1c1e047f74b1",
+    "store_sha256": "b4f1e3da82f3bd25ab295b4f55025fedd64e83a026f4cf5b7938358d3c8149b0",
+    "invalidation": "Before each cold sample, select and read an empty list, then select active list outside timing; measure first active-list column lookup and remaining workload. Refresh and preference writes are outside the timer.",
+    "checksum": 517572,
+    "samples_per_case": 5,
+    "rows": [
+      {
+        "variant": "production",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.00575,
+        "mean_ms": 0.006408,
+        "max_ms": 0.009667,
+        "p95_ms": 0.009667
+      },
+      {
+        "variant": "production-cold",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.144458,
+        "mean_ms": 0.1467,
+        "max_ms": 0.157166,
+        "p95_ms": 0.157166
+      },
+      {
+        "variant": "prototype-cold",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.138,
+        "mean_ms": 0.13895,
+        "max_ms": 0.144167,
+        "p95_ms": 0.144167
+      },
+      {
+        "variant": "prototype-warm",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.003083,
+        "mean_ms": 0.003083,
+        "max_ms": 0.003125,
+        "p95_ms": 0.003125
+      },
+      {
+        "variant": "production",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.026625,
+        "mean_ms": 0.026433,
+        "max_ms": 0.027458,
+        "p95_ms": 0.027458
+      },
+      {
+        "variant": "production-cold",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.164417,
+        "mean_ms": 0.164892,
+        "max_ms": 0.169667,
+        "p95_ms": 0.169667
+      },
+      {
+        "variant": "prototype-cold",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.150125,
+        "mean_ms": 0.149708,
+        "max_ms": 0.15125,
+        "p95_ms": 0.15125
+      },
+      {
+        "variant": "prototype-warm",
+        "total_reminders": 100,
+        "selected_reminders": 60,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.015709,
+        "mean_ms": 0.015675,
+        "max_ms": 0.015833,
+        "p95_ms": 0.015833
+      },
+      {
+        "variant": "production",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.005541,
+        "mean_ms": 0.005566,
+        "max_ms": 0.005833,
+        "p95_ms": 0.005833
+      },
+      {
+        "variant": "production-cold",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 1.664583,
+        "mean_ms": 1.66525,
+        "max_ms": 1.706916,
+        "p95_ms": 1.706916
+      },
+      {
+        "variant": "prototype-cold",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 1.636541,
+        "mean_ms": 1.639875,
+        "max_ms": 1.656375,
+        "p95_ms": 1.656375
+      },
+      {
+        "variant": "prototype-warm",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.003041,
+        "mean_ms": 0.003025,
+        "max_ms": 0.003042,
+        "p95_ms": 0.003042
+      },
+      {
+        "variant": "production",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.025208,
+        "mean_ms": 0.025791,
+        "max_ms": 0.02725,
+        "p95_ms": 0.02725
+      },
+      {
+        "variant": "production-cold",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 1.675416,
+        "mean_ms": 1.6747,
+        "max_ms": 1.693083,
+        "p95_ms": 1.693083
+      },
+      {
+        "variant": "prototype-cold",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 1.655958,
+        "mean_ms": 1.657166,
+        "max_ms": 1.700416,
+        "p95_ms": 1.700416
+      },
+      {
+        "variant": "prototype-warm",
+        "total_reminders": 1000,
+        "selected_reminders": 600,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.015167,
+        "mean_ms": 0.015267,
+        "max_ms": 0.015666,
+        "p95_ms": 0.015666
+      },
+      {
+        "variant": "production",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.005292,
+        "mean_ms": 0.008192,
+        "max_ms": 0.014625,
+        "p95_ms": 0.014625
+      },
+      {
+        "variant": "production-cold",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 11.810917,
+        "mean_ms": 12.087525,
+        "max_ms": 12.842458,
+        "p95_ms": 12.842458
+      },
+      {
+        "variant": "prototype-cold",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 11.701292,
+        "mean_ms": 11.743358,
+        "max_ms": 11.861708,
+        "p95_ms": 11.861708
+      },
+      {
+        "variant": "prototype-warm",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 3,
+        "samples": 5,
+        "median_ms": 0.003083,
+        "mean_ms": 0.003067,
+        "max_ms": 0.003125,
+        "p95_ms": 0.003125
+      },
+      {
+        "variant": "production",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.029208,
+        "mean_ms": 0.032683,
+        "max_ms": 0.04975,
+        "p95_ms": 0.04975
+      },
+      {
+        "variant": "production-cold",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 11.763875,
+        "mean_ms": 11.715542,
+        "max_ms": 12.254375,
+        "p95_ms": 12.254375
+      },
+      {
+        "variant": "prototype-cold",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 11.535166,
+        "mean_ms": 11.649975,
+        "max_ms": 12.272959,
+        "p95_ms": 12.272959
+      },
+      {
+        "variant": "prototype-warm",
+        "total_reminders": 5000,
+        "selected_reminders": 3000,
+        "queries_per_sample": 15,
+        "samples": 5,
+        "median_ms": 0.015,
+        "mean_ms": 0.014933,
+        "max_ms": 0.015167,
+        "p95_ms": 0.015167
+      }
+    ]
+  }
+}

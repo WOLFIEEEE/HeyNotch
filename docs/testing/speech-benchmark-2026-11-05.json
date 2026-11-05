@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-05",
+  "hardware": "Apple M3 Pro, 18 GiB RAM",
+  "system": "macOS 27.0.1, Xcode 26.6",
+  "engine": "WhisperKit 1.1.1 (1bbc57cb7fe6410248a685b1c5a3c6d56adc2ed4)",
+  "modelRevision": "0f63a7800b00dd0226abd051b906c246e1907482",
+  "method": "Generated Samantha/Lekha speech; three 4.7–4.8 second clips; local engine; each decoded twice. No microphone recording or cloud inference. These are development measurements, not a representative accuracy study.",
+  "turboFirstPreparationSecondsApproximate": 176.4,
+  "turboFinalProcessMaximumResidentBytes": 280756224,
+  "turboFinalProcessPeakFootprintBytes": 216384568,
+  "initialBaseColdAttempt": "The first cold invocation returned an invalid/empty transcript. The engine now allows one local retry for empty output only; repeated output remains rejected. Later base and Turbo sample runs completed.",
+  "results": [
+    {
+      "loadSeconds": 0.8957090377807617,
+      "model": "base",
+      "runs": [
+        {
+          "attempt": 1,
+          "audioSeconds": 4.78671201814059,
+          "recognitionSeconds": 0.14379000663757324,
+          "sample": "heynotch-benchmark-facts.aiff",
+          "transcript": "do not send the invoice yet, the total is $42.50."
+        },
+        {
+          "attempt": 2,
+          "audioSeconds": 4.78671201814059,
+          "recognitionSeconds": 0.10815799236297607,
+          "sample": "heynotch-benchmark-facts.aiff",
+          "transcript": "do not send the invoice yet, the total is $42.50."
+        },
+        {
+          "attempt": 1,
+          "audioSeconds": 4.665260770975057,
+          "recognitionSeconds": 0.11466801166534424,
+          "sample": "heynotch-benchmark-task.aiff",
+          "transcript": "Please schedule the design review for Friday at 10.30. Bring the updated notes."
+        },
+        {
+          "attempt": 2,
+          "audioSeconds": 4.665260770975057,
+          "recognitionSeconds": 0.11275804042816162,
+          "sample": "heynotch-benchmark-task.aiff",
+          "transcript": "Please schedule the design review for Friday at 10.30. Bring the updated notes."
+        },
+        {
+          "attempt": 1,
+          "audioSeconds": 4.81718820861678,
+          "recognitionSeconds": 0.22275102138519287,
+          "sample": "heynotch-benchmark-hindi.aiff",
+          "transcript": "کر سبہ 10 бجی داپترکہ کو فون் کرنا ہے. Kripyah new report Saat Lana"
+        },
+        {
+          "attempt": 2,
+          "audioSeconds": 4.81718820861678,
+          "recognitionSeconds": 0.19162309169769287,
+          "sample": "heynotch-benchmark-hindi.aiff",
+          "transcript": "کر سبہ 10 бجی داپTER کر نا ہیں. KRIPIA new report 7 LANA"
+        }
+      ]
+    },
+    {
+      "loadSeconds": 2.276139974594116,
+      "model": "turbo",
+      "runs": [
+        {
+          "attempt": 1,
+          "audioSeconds": 4.78671201814059,
+          "recognitionSeconds": 0.6860250234603882,
+          "sample": "heynotch-benchmark-facts.aiff",
+          "transcript": "Do not send the invoice yet. The total is $42.50."
+        },
+        {
+          "attempt": 2,
+          "audioSeconds": 4.78671201814059,
+          "recognitionSeconds": 0.5807449817657471,
+          "sample": "heynotch-benchmark-facts.aiff",
+          "transcript": "Do not send the invoice yet. The total is $42.50."
+        },
+        {
+          "attempt": 1,
+          "audioSeconds": 4.665260770975057,
+          "recognitionSeconds": 0.6169919967651367,
+          "sample": "heynotch-benchmark-task.aiff",
+          "transcript": "Please schedule the design review for Friday at 10.30. Bring the updated notes."
+        },
+        {
+          "attempt": 2,
+          "audioSeconds": 4.665260770975057,
+          "recognitionSeconds": 0.6103830337524414,
+          "sample": "heynotch-benchmark-task.aiff",
+          "transcript": "Please schedule the design review for Friday at 10.30. Bring the updated notes."
+        },
+        {
+          "attempt": 1,
+          "audioSeconds": 4.81718820861678,
+          "recognitionSeconds": 1.1727370023727417,
+          "sample": "heynotch-benchmark-hindi.aiff",
+          "transcript": "कल सुबह 10 बजे दौप्तर को फोन करना है. कृपिया नई रिपोर्ट साथ लाना."
+        },
+        {
+          "attempt": 2,
+          "audioSeconds": 4.81718820861678,
+          "recognitionSeconds": 1.1578630208969116,
+          "sample": "heynotch-benchmark-hindi.aiff",
+          "transcript": "कल सुबह 10 बजे दौप्तर को फोन करना है. कृपिया नई रिपोर्ट साथ लाना."
+        }
+      ]
+    }
+  ]
+}

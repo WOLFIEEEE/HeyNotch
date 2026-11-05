@@ -1,0 +1,121 @@
+
+@MainActor
+private final class ProbeCallbacks {
+    var began = 0
+    var changed = 0
+    var ended = 0
+    var activations = 0
+    var trace: [[String: Any]] = []
+    func receive(_ distance: CGFloat, _ phase: NSEvent.Phase) {
+        trace.append(["distance": Double(distance), "phase": phase.rawValue])
+        if phase == .began { began += 1 }
+        if phase == .changed { changed += 1 }
+        if phase == .ended { ended += 1 }
+        if distance >= 40 { activations += 1 }
+    }
+}
+
+@MainActor
+private func fixtureEvent(header: Bool = true, phase: NSEvent.Phase = [], momentum: NSEvent.Phase = []) -> NSEvent {
+    let cg = CGEvent(scrollWheelEvent2Source: nil, units: .pixel, wheelCount: 1, wheel1: -10, wheel2: 0, wheel3: 0)!
+    cg.location = CGPoint(x: 20, y: 20)
+    cg.setIntegerValueField(.scrollWheelEventIsContinuous, value: phase.isEmpty && momentum.isEmpty ? 0 : 1)
+    // CoreGraphics encodings differ from NSEvent.Phase.rawValue. Verify the resulting event
+    // below so a fixture cannot silently exercise ended/unphased input instead of changed.
+    let scrollValue: Int64
+    switch phase {
+    case []: scrollValue = 0
+    case .began: scrollValue = 1
+    case .changed: scrollValue = 2
+    case .ended: scrollValue = 4
+    case .cancelled: scrollValue = 8
+    default: preconditionFailure("Unsupported fixture scroll phase")
+    }
+    let momentumValue: Int64
+    switch momentum {
+    case []: momentumValue = 0
+    case .began: momentumValue = 1
+    case .changed: momentumValue = 2
+    case .ended: momentumValue = 3
+    default: preconditionFailure("Unsupported fixture momentum phase")
+    }
+    cg.setIntegerValueField(.scrollWheelEventScrollPhase, value: scrollValue)
+    cg.setIntegerValueField(.scrollWheelEventMomentumPhase, value: momentumValue)
+    let first = NSEvent(cgEvent: cg)!
+    let targetY: CGFloat = header ? 80 : 20
+    cg.location.y += first.locationInWindow.y - targetY
+    let event = NSEvent(cgEvent: cg)!
+    precondition(event.phase == phase && event.momentumPhase == momentum, "Constructed event phases differ from requested phases")
+    return event
+}
+
+@main @MainActor
+private struct GestureTimerProbe {
+    static func main() async throws {
+        var results: [[String: Any]] = []
+        for name in ["disabled", "outside_header", "accepted", "enable_midstream", "enter_header_midstream", "phased_without_start", "accepted_two_bursts", "rejected_then_idle_then_header", "extended_accepted_burst", "accepted_then_disabled", "accepted_then_phased_cancel", "accepted_teardown_then_restart", "disabled_idle_reenabled", "phased_then_momentum", "orphan_momentum"] {
+            let callbacks = ProbeCallbacks()
+            func configuration(enabled: Bool) -> ScrollMonitor {
+                ScrollMonitor(direction: .up, threshold: 4, isEnabled: enabled,
+                              allowedRegion: .top(height: 32), activationThreshold: 40,
+                              action: callbacks.receive)
+            }
+            let coordinator = ScrollMonitor.Coordinator(configuration: configuration(enabled: name != "disabled" && name != "enable_midstream"))
+            let view = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: 100))
+            var eventCount = 0
+            var eventKinds: [String: Int] = [:]
+            func feed(_ count: Int, header: Bool = true, phase: NSEvent.Phase = [], momentum: NSEvent.Phase = []) {
+                for _ in 0..<count {
+                    let event = fixtureEvent(header: header, phase: phase, momentum: momentum)
+                    let kind = "phase=\(event.phase.rawValue),momentum=\(event.momentumPhase.rawValue),precise=\(event.hasPreciseScrollingDeltas)"
+                    eventKinds[kind, default: 0] += 1
+                    coordinator.handleScroll(event, in: view); eventCount += 1
+                }
+            }
+            var endedBeforeQuiet: Int?
+            switch name {
+            case "outside_header": feed(200, header: false)
+            case "enable_midstream":
+                feed(100); coordinator.update(from: configuration(enabled: true)); feed(100)
+            case "enter_header_midstream": feed(100, header: false); feed(100)
+            case "phased_without_start": feed(200, phase: .changed)
+            case "accepted_two_bursts":
+                feed(100); try await Task.sleep(for: .milliseconds(380)); feed(100)
+            case "rejected_then_idle_then_header":
+                feed(100, header: false); try await Task.sleep(for: .milliseconds(380)); feed(100)
+            case "accepted_then_disabled":
+                feed(20); coordinator.update(from: configuration(enabled: false)); feed(100)
+                coordinator.update(from: configuration(enabled: true)); feed(100)
+            case "accepted_then_phased_cancel":
+                feed(20); feed(1, phase: .began); feed(10, phase: .changed); feed(1, phase: .cancelled)
+            case "accepted_teardown_then_restart":
+                feed(20); coordinator.removeMonitor(); feed(20)
+            case "disabled_idle_reenabled":
+                feed(20); coordinator.update(from: configuration(enabled: false)); feed(20)
+                try await Task.sleep(for: .milliseconds(380))
+                coordinator.update(from: configuration(enabled: true)); feed(20)
+            case "phased_then_momentum":
+                feed(1, phase: .began); feed(10, phase: .changed); feed(1, phase: .ended)
+                feed(1, momentum: .began); feed(100, momentum: .changed); feed(1, momentum: .ended)
+            case "orphan_momentum": feed(200, momentum: .changed)
+            case "extended_accepted_burst":
+                feed(20); try await Task.sleep(for: .milliseconds(200))
+                feed(20); try await Task.sleep(for: .milliseconds(200))
+                feed(20); try await Task.sleep(for: .milliseconds(200))
+                endedBeforeQuiet = callbacks.ended
+            default: feed(200)
+            }
+            try await Task.sleep(for: .milliseconds(380))
+            var result: [String: Any] = ["case": name, "events": eventCount,
+                "timeoutTasksCreated": coordinator.probeCreated, "timeoutTasksCancelled": coordinator.probeCancelled,
+                "beganCallbacks": callbacks.began, "changedCallbacks": callbacks.changed,
+                "endedCallbacks": callbacks.ended, "activations": callbacks.activations,
+                "callbackTrace": callbacks.trace, "observedEventKinds": eventKinds]
+            if let endedBeforeQuiet { result["endedBeforeQuiet"] = endedBeforeQuiet }
+            results.append(result)
+            coordinator.removeMonitor()
+        }
+        let json = try JSONSerialization.data(withJSONObject: ["eventDelivery": "Direct actual handleScroll calls with constructed NSEvent; no event posting, windows, NSApplication run, or UI launch", "results": results], options: [.prettyPrinted, .sortedKeys])
+        print(String(decoding: json, as: UTF8.self))
+    }
+}

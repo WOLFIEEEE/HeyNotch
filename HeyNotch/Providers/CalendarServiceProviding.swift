@@ -17,7 +17,7 @@ protocol CalendarServiceProviding {
 }
 
 class CalendarService: CalendarServiceProviding {
-    private let store = EKEventStore()
+    private let store = EventStoreProvider.shared
     
     @MainActor
     func requestAccess(to type: EKEntityType) async throws -> Bool {

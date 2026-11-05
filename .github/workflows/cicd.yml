@@ -1,47 +1,82 @@
-name: Build for macOS
+name: Build and test
 
 on:
   push:
-    branches:
-      - '*'
   pull_request:
-    branches:
-      - '*'
+  workflow_dispatch:
 
-# https://stackoverflow.com/a/72408109/6942800
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-# Least-privilege: only needs to read code for building.
-permissions:
-  contents: read
-
 jobs:
-  build:
-    name: Build HeyNotch
-    strategy:
-      matrix:
-        platform:
-          - macOS
-        xcode:
-          - ^16
-        scheme:
-          - HeyNotch
-    # macos-latest now resolves to macos-26, which does not ship Xcode 16.
-    # Keep this legacy main-branch build on an image with the requested toolchain.
-    runs-on: macos-15
+  repository-checks:
+    name: Repository checks
+    if: github.repository == 'WOLFIEEEE/HeyNotch'
+    runs-on: ubuntu-latest
     steps:
-    - name: Code Checkout
-      # TODO: pin to immutable SHA
-      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-    - # TODO: pin to immutable SHA
-      uses: mxcl/xcodebuild@d3ee9b419c1be9a988086c58fe0988f32d99cfc5 # v3.6.0
-      with:
-        xcode: ${{ matrix.xcode }}
-        platform: ${{ matrix.platform }}
-        scheme: ${{ matrix.scheme }}
-        action: build
-        verbosity: xcpretty
-        upload-logs: always
-        configuration: release
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test build tools and fork configuration
+        run: python3 -B -m unittest discover -s .github/scripts/tests -v
+
+  build:
+    name: Build and test HeyNotch
+    if: github.repository == 'WOLFIEEEE/HeyNotch'
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify toolchain
+        run: xcodebuild -version
+      - name: Build and run app logic tests
+        run: |
+          xcodebuild test \
+            -project HeyNotch.xcodeproj \
+            -scheme HeyNotch \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/HeyNotch-derived-data" \
+            -resultBundlePath "$RUNNER_TEMP/HeyNotch-tests.xcresult" \
+            -onlyUsePackageVersionsFromResolvedFile \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
+      - name: Build release configuration
+        run: |
+          xcodebuild build \
+            -project HeyNotch.xcodeproj \
+            -scheme HeyNotch \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/HeyNotch-derived-data" \
+            -disableAutomaticPackageResolution \
+            -skipPackageUpdates \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: HeyNotch-test-results
+          path: ${{ runner.temp }}/HeyNotch-tests.xcresult
+          if-no-files-found: ignore
+      - name: Package unsigned development app
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$RUNNER_TEMP/HeyNotch-derived-data/Build/Products/Release/HeyNotch.app" \
+            "$RUNNER_TEMP/HeyNotch-unsigned.zip"
+      - name: Upload unsigned development app
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: HeyNotch-unsigned
+          path: ${{ runner.temp }}/HeyNotch-unsigned.zip

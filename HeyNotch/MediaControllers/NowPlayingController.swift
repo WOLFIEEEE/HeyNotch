@@ -71,6 +71,7 @@ final class NowPlayingController: ObservableObject, MediaControllerProtocol {
 
     // MARK: - Initialization
     init?() {
+        guard #available(macOS 15.0, *) else { return nil }
         guard
             let bundle = CFBundleCreate(
                 kCFAllocatorDefault,

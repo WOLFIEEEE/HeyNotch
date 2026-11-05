@@ -53,3 +53,10 @@ build/
 *.xcarchive
 *.dSYM
 
+# Shared schemes are part of the reproducible build and test configuration.
+!HeyNotch.xcodeproj/xcshareddata/xcschemes/*.xcscheme
+
+# Python test caches
+__pycache__/
+*.py[cod]
+

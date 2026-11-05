@@ -15,11 +15,16 @@ struct TabButton: View {
     
     var body: some View {
         Button(action: onClick) {
-            Image(systemName: icon)
-                .padding(.horizontal, 15)
+            HStack(spacing: 5) {
+                Image(systemName: icon)
+                if selected { Text(label).font(.system(size: 11, weight: .semibold)) }
+            }
+                .padding(.horizontal, 10)
                 .contentShape(Capsule())
         }
         .buttonStyle(PlainButtonStyle())
+        .accessibilityLabel(label).accessibilityValue(selected ? "Selected" : "")
+        .help(label == "Music" ? "Music & Calendar" : label)
     }
 }
 

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; media-src 'self' blob:; base-uri 'none'; form-action 'none'">
+  <title>HeyNotch local WebRTC audio test</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="test.js" defer></script>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">HeyNotch verification fixture</p>
+    <h1>Local WebRTC call audio</h1>
+    <p>This page sends generated speech between two browser peers on this Mac. Only the receiver is connected to your speakers. No microphone, camera, account, or external service is used.</p>
+    <section aria-labelledby="phrase-title">
+      <h2 id="phrase-title">Expected call-channel speech</h2>
+      <blockquote>Call channel verification. Cobalt river forty two. The invoice is one hundred twenty seven dollars. Do not send it today.</blockquote>
+      <p>The phrase plays three times, with quiet gaps, then stops automatically. Start HeyNotch’s meeting capture before pressing Start here.</p>
+    </section>
+    <div class="buttons">
+      <button id="start" type="button">Start local call test</button>
+      <button id="stop" type="button" disabled>Stop test</button>
+      <button id="report" type="button" disabled>Save test report</button>
+    </div>
+    <p id="status" role="status" aria-live="polite">Ready. Nothing is playing.</p>
+    <dl>
+      <div><dt>Sender connection</dt><dd id="sender">Not started</dd></div>
+      <div><dt>Receiver connection</dt><dd id="receiver">Not started</dd></div>
+      <div><dt>Elapsed</dt><dd id="elapsed">0.0 seconds</dd></div>
+      <div><dt>Received audio packets</dt><dd id="packets">0</dd></div>
+      <div><dt>Received audio bytes</dt><dd id="bytes">0</dd></div>
+      <div><dt>Receiver energy</dt><dd id="energy">0</dd></div>
+      <div><dt>Playback context</dt><dd id="context">Not started</dd></div>
+      <div><dt>Sender ICE</dt><dd id="senderIce">Not started</dd></div>
+      <div><dt>Receiver ICE</dt><dd id="receiverIce">Not started</dd></div>
+      <div><dt>Sender local candidates</dt><dd id="senderCandidates">0</dd></div>
+      <div><dt>Receiver local candidates</dt><dd id="receiverCandidates">0</dd></div>
+    </dl>
+    <h2>Connection diagnostics</h2>
+    <pre id="diagnostics" aria-live="polite">No test has run. Addresses and SDP are not logged.</pre>
+    <p class="note">This validates local browser WebRTC output. It does not by itself prove remote-human speech, microphone isolation, echo cancellation, another computer’s network path, or successful HeyNotch capture. If your speakers feed the Mac microphone, the same phrase can appear in both HeyNotch channels; that is acoustic leakage, not an independent two-sided test.</p>
+  </main>
+</body>
+</html>

@@ -2,6 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key><string>com.wolfieeee.heynotch.task-move</string>
+			<key>UTTypeDescription</key><string>HeyNotch task move</string>
+			<key>UTTypeConformsTo</key><array><string>public.data</string></array>
+		</dict>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.wolfieeee.heynotch.task</string>
+			<key>CFBundleURLSchemes</key>
+			<array><string>heynotch</string></array>
+		</dict>
+	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>HeyNotch records your microphone only when you start dictation, a voice task, or meeting transcription. Speech is transcribed on this Mac.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -9,14 +28,16 @@
 	</dict>
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
+	<key>HeyNotchUpdatesEnabled</key>
+	<false/>
+	<key>SUAutomaticallyUpdate</key>
+	<false/>
 	<key>SUEnableDownloaderService</key>
 	<true/>
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>
 	<string>https://WOLFIEEEE.github.io/HeyNotch/appcast.xml</string>
-	<key>SUPublicEDKey</key>
-	<string>B1Y47t8C/v8ImurYA+9arEsuCrpxwJSviekiflMElbI=</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict/>

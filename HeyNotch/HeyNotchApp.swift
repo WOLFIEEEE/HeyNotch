@@ -17,26 +17,39 @@ struct DynamicNotchApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Default(.menubarIcon) var showMenuBarIcon
     @Environment(\.openWindow) var openWindow
+    @ObservedObject private var meeting = MeetingCoordinator.shared
 
     let updaterController: SPUStandardUpdaterController
 
     init() {
         updaterController = SPUStandardUpdaterController(
-            startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+            startingUpdater: AppUpdatePolicy.current.allowsUpdates,
+            updaterDelegate: nil, userDriverDelegate: nil)
 
         // Initialize the settings window controller with the updater controller
         SettingsWindowController.shared.setUpdaterController(updaterController)
     }
 
     var body: some Scene {
-        MenuBarExtra("HeyNotch", systemImage: "sparkle", isInserted: $showMenuBarIcon) {
+        MenuBarExtra(isInserted: $showMenuBarIcon) {
             Button("Settings") {
                 DispatchQueue.main.async {
                     SettingsWindowController.shared.showWindow()
                 }
             }
             .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
+            Button("Start / Finish Dictation") { VoiceCoordinator.shared.toggle(.dictation) }
+            Button("New Task…") { TaskController.shared.newTask() }
+            Button("Tasks…") { TaskController.shared.showWindow() }
+            Button("Meeting Transcription…") { MeetingCoordinator.shared.showWindow() }
+            Button("Meeting Library…") { MeetingHistoryController.shared.showWindow() }
+            if meeting.phase == .recording || meeting.phase == .starting {
+                Button("Stop Meeting Transcription") { meeting.stop() }
+            }
             CheckForUpdatesView(updater: updaterController.updater)
+            Button("Try Text Insertion in 5 Seconds") {
+                TextInsertionCoordinator.shared.tryAfterCountdown()
+            }
             Divider()
             Button("Restart HeyNotch") {
                 ApplicationRelauncher.restart()
@@ -45,6 +58,31 @@ struct DynamicNotchApp: App {
                 NSApplication.shared.terminate(self)
             }
             .keyboardShortcut(KeyEquivalent("Q"), modifiers: .command)
+        } label: {
+            if meeting.phase == .recording {
+                Label("HeyNotch · Recording meeting", systemImage: "record.circle.fill")
+            } else {
+                Image("HeyNotchMenuBar")
+                    .renderingMode(.template)
+                    .accessibilityLabel("HeyNotch")
+            }
+        }
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings…") { SettingsWindowController.shared.showWindow() }
+                    .keyboardShortcut(",", modifiers: .command)
+                Button("Start / Finish Dictation") { VoiceCoordinator.shared.toggle(.dictation) }
+                Button("New Task…") { TaskController.shared.newTask() }.keyboardShortcut("n", modifiers: [.command, .shift])
+                Button("Tasks…") { TaskController.shared.showWindow() }
+                Button("Meeting Transcription…") { MeetingCoordinator.shared.showWindow() }.keyboardShortcut("m", modifiers: [.command, .shift])
+                Button("Meeting Library…") { MeetingHistoryController.shared.showWindow() }.keyboardShortcut("l", modifiers: [.command, .shift])
+                if meeting.phase == .recording || meeting.phase == .starting {
+                    Button("Stop Meeting Transcription") { meeting.stop() }
+                }
+                Button("Try Text Insertion in 5 Seconds") {
+                    TextInsertionCoordinator.shared.tryAfterCountdown()
+                }
+            }
         }
     }
 }
@@ -70,6 +108,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return false
+    }
+
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        let meeting = MeetingCoordinator.shared
+        guard meeting.phase.isBusy || meeting.hasUnsavedTranscript else { return .terminateNow }
+        let alert = NSAlert()
+        alert.messageText = meeting.phase.isBusy ? "Stop and review this meeting before quitting?" : "Keep this meeting transcript before quitting?"
+        alert.informativeText = "Review the transcript before quitting. Unsaved text and unfinished audio will be discarded. Transcripts already saved in your library or exported files will remain."
+        alert.addButton(withTitle: "Review Transcript")
+        alert.addButton(withTitle: "Quit and Discard")
+        alert.addButton(withTitle: "Cancel")
+        switch alert.runModal() {
+        case .alertSecondButtonReturn: return .terminateNow
+        case .alertFirstButtonReturn:
+            meeting.stop(); meeting.showWindow(); return .terminateCancel
+        default: return .terminateCancel
+        }
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard let operation = urls.compactMap(TaskLink.operation(in:)).first else { return }
+        Task { @MainActor in await TaskController.shared.openTaskLink(operation) }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -175,7 +235,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupDragDetectors() {
         cleanupDragDetectors()
 
-        guard Defaults[.expandedDragDetection] else { return }
+        guard Defaults[.expandedDragDetection], Defaults[.heyShelf] else { return }
 
         if Defaults[.showOnAllDisplays] {
             for screen in NSScreen.screens {
@@ -220,14 +280,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func handleDragEntersNotchRegion(onScreen screen: NSScreen) {
+        guard Defaults[.heyShelf] else { return }
         guard let uuid = screen.displayUUID else { return }
         
         if Defaults[.showOnAllDisplays], let viewModel = viewModels[uuid] {
-            viewModel.open()
-            coordinator.currentView = .shelf
+            viewModel.open(page: .shelf)
         } else if !Defaults[.showOnAllDisplays], let windowScreen = window?.screen, screen == windowScreen {
-            vm.open()
-            coordinator.currentView = .shelf
+            vm.open(page: .shelf)
         }
     }
 
@@ -248,6 +307,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             rootView: ContentView()
                 .environmentObject(viewModel)
         )
+
+        viewModel.$notchSize.receive(on: RunLoop.main)
+            .sink { [weak self, weak window, weak viewModel] _ in
+                guard let self, let window, let viewModel else { return }
+                let targetScreen = viewModel.screenUUID.flatMap { NSScreen.screen(withUUID: $0) } ?? window.screen ?? screen
+                let size = viewModel.panelSize
+                let frame = NSRect(x: targetScreen.frame.midX - size.width / 2,
+                                   y: targetScreen.frame.maxY - size.height, width: size.width, height: size.height)
+                window.setFrame(frame, display: true)
+                self.positionWindow(window, on: targetScreen)
+            }.store(in: &viewModel.cancellables)
 
         window.orderFrontRegardless()
         NotchSpaceManager.shared.notchSpace.windows.insert(window)
@@ -280,6 +350,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+
+        // Different development/install folders can launch copies of the same
+        // app. Keep one owner of recording, notifications and the helper.
+        if let bundleID = Bundle.main.bundleIdentifier {
+            let siblings = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+                .sorted {
+                    let left = $0.launchDate ?? .distantPast, right = $1.launchDate ?? .distantPast
+                    return left == right ? $0.processIdentifier < $1.processIdentifier : left < right
+                }
+            if let existing = siblings.first, existing.processIdentifier != ProcessInfo.processInfo.processIdentifier {
+                // Restart briefly overlaps the old and new processes. Give the
+                // old instance time to terminate before deciding it owns launch.
+                Task { @MainActor [weak self] in
+                    try? await Task.sleep(for: .seconds(1))
+                    if existing.isTerminated { self?.applicationDidFinishLaunching(notification) }
+                    else { existing.activate(options: [.activateAllWindows]); NSApp.terminate(nil) }
+                }
+                return
+            }
+        }
 
         NotificationCenter.default.addObserver(
             self,
@@ -351,6 +441,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
         }
 
+        VoiceCoordinator.shared.registerShortcuts()
+        MeetingCoordinator.shared.startMonitoring()
+        AutomationCoordinator.shared.start()
+        KeyboardShortcuts.onKeyUp(for: .testTextInsertion) {
+            TextInsertionCoordinator.shared.insertSample()
+        }
+
         KeyboardShortcuts.onKeyDown(for: .toggleSneakPeek) { [weak self] in
             guard let self = self else { return }
             if Defaults[.sneakPeekStyles] == .inline {
@@ -397,7 +494,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         do {
                             try await Task.sleep(for: .seconds(3))
                             await MainActor.run {
-                                viewModel?.close()
+                                if let viewModel, !viewModel.isMouseHovering(), !viewModel.isNotchMenuActive {
+                                    viewModel.close()
+                                }
                             }
                         } catch { }
                     }
@@ -501,6 +600,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
 
                 if let window = windows[uuid], let viewModel = viewModels[uuid] {
+                    viewModel.closedNotchSize = getClosedNotchSize(screenUUID: uuid)
+                    if viewModel.notchState == .open { viewModel.refreshOpenSize(resetHeight: true) }
                     positionWindow(window, on: screen, changeAlpha: changeAlpha)
 
                     if viewModel.notchState == .closed {
@@ -526,7 +627,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             vm.screenUUID = selectedScreen.displayUUID
-            vm.notchSize = getClosedNotchSize(screenUUID: selectedScreen.displayUUID)
+            vm.closedNotchSize = getClosedNotchSize(screenUUID: selectedScreen.displayUUID)
+            if vm.notchState == .open { vm.refreshOpenSize(resetHeight: true) }
+            else { vm.notchSize = getClosedNotchSize(screenUUID: selectedScreen.displayUUID) }
 
             if window == nil {
                 window = createHeyNotchWindow(for: selectedScreen, with: vm)

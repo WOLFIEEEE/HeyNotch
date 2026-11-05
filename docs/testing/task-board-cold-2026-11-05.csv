@@ -1,0 +1,37 @@
+# source_sha256 dabde43a16e5e6ac53144b27d426116148d3c8b47e60f8cb8b244ac1ef9166b1 /Users/khushwantparihar/boring.notch---Personalizaton/HeyNotch/Tasks/Core/TaskModels.swift
+# source_sha256 c17b1aeb9d74f547c493145ccf8b7b5b026a7eabb024da26dbdc55226a96687c /Users/khushwantparihar/boring.notch---Personalizaton/HeyNotch/Tasks/Core/TaskDateParser.swift
+# source_sha256 ed40be6191fa0206d68f488a53210401d972f1b007d94cb316ec8784bc802878 /Users/khushwantparihar/boring.notch---Personalizaton/HeyNotch/Tasks/Core/TaskKanbanModels.swift
+# source_sha256 b4f1e3da82f3bd25ab295b4f55025fedd64e83a026f4cf5b7938358d3c8149b0 /Users/khushwantparihar/boring.notch---Personalizaton/HeyNotch/Tasks/Core/TaskBoardStore.swift
+# source_sha256 6665b4cc81ba4280fbc1e1ebdbf277ae4d27fe2a3f9fe42a080a72411ba9a4f9 /Users/khushwantparihar/boring.notch---Personalizaton/HeyNotch/Processing/Core/ProcessingModels.swift
+# source_sha256 20096b4392a6f3b48c031ca155febac0fb92c497e1bcc1bf653c1c1e047f74b1 /Users/khushwantparihar/boring.notch---Personalizaton/docs/testing/TaskBoardBenchmark.swift
+# Synthetic task-store queries only; not UI frame timing or real reminders.
+# OS=Version 27.0.1 (Build 26A434); CPUs=11; calendar=gregorian; locale=en_US@rg=inzzzz; zone=Asia/Kolkata
+# Actual TaskBoardStore is compiled unmodified; prototype is local to this harness.
+# production is warm; production-cold forces a list-key change before timing the first active-list lookup. Refresh is outside both timings.
+# Queries=3: one read per lane. Queries=15: four body reads plus one height read per lane; modeled source workload, not measured SwiftUI evaluations.
+variant,total_reminders,selected_reminders,queries_per_sample,samples,median_ms,mean_ms,max_ms
+production,100,60,3,5,0.005750,0.006408,0.009667
+production-cold,100,60,3,5,0.144458,0.146700,0.157166
+prototype-cold,100,60,3,5,0.138000,0.138950,0.144167
+prototype-warm,100,60,3,5,0.003083,0.003083,0.003125
+production,100,60,15,5,0.026625,0.026433,0.027458
+production-cold,100,60,15,5,0.164417,0.164892,0.169667
+prototype-cold,100,60,15,5,0.150125,0.149708,0.151250
+prototype-warm,100,60,15,5,0.015709,0.015675,0.015833
+production,1000,600,3,5,0.005541,0.005566,0.005833
+production-cold,1000,600,3,5,1.664583,1.665250,1.706916
+prototype-cold,1000,600,3,5,1.636541,1.639875,1.656375
+prototype-warm,1000,600,3,5,0.003041,0.003025,0.003042
+production,1000,600,15,5,0.025208,0.025791,0.027250
+production-cold,1000,600,15,5,1.675416,1.674700,1.693083
+prototype-cold,1000,600,15,5,1.655958,1.657166,1.700416
+prototype-warm,1000,600,15,5,0.015167,0.015267,0.015666
+production,5000,3000,3,5,0.005292,0.008192,0.014625
+production-cold,5000,3000,3,5,11.810917,12.087525,12.842458
+prototype-cold,5000,3000,3,5,11.701292,11.743358,11.861708
+prototype-warm,5000,3000,3,5,0.003083,0.003067,0.003125
+production,5000,3000,15,5,0.029208,0.032683,0.049750
+production-cold,5000,3000,15,5,11.763875,11.715542,12.254375
+prototype-cold,5000,3000,15,5,11.535166,11.649975,12.272959
+prototype-warm,5000,3000,15,5,0.015000,0.014933,0.015167
+# checksum=517572; full reminder-value equality passed for every size/column

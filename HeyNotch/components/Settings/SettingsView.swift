@@ -54,6 +54,13 @@ struct SettingsView: View {
                 NavigationLink(value: "Shortcuts") {
                     Label("Shortcuts", systemImage: "keyboard")
                 }
+                NavigationLink(value: "Voice") { Label("Voice", systemImage: "mic") }
+                NavigationLink(value: "Meetings") { Label("Meetings", systemImage: "person.2.wave.2") }
+                NavigationLink(value: "Tasks") { Label("Tasks", systemImage: "checklist") }
+                NavigationLink(value: "Agent access") { Label("Agent access", systemImage: "link") }
+                NavigationLink(value: "Processing") {
+                    Label("Processing", systemImage: "sparkles")
+                }
                 // NavigationLink(value: "Extensions") {
                 //     Label("Extensions", systemImage: "puzzlepiece.extension")
                 // }
@@ -87,6 +94,16 @@ struct SettingsView: View {
                     Shelf()
                 case "Shortcuts":
                     Shortcuts()
+                case "Voice":
+                    VoiceSettingsView()
+                case "Meetings":
+                    MeetingSettingsView()
+                case "Tasks":
+                    TaskSettingsView()
+                case "Agent access":
+                    AutomationSettingsView()
+                case "Processing":
+                    ProcessingSettingsView()
                 case "Extensions":
                     GeneralSettings()
                 case "Advanced":
@@ -310,7 +327,7 @@ struct GeneralSettings: View {
             }
         } footer: {
             Text(
-                "Two-finger swipe up on notch to close, two-finger swipe down on notch to open when **Open notch on hover** option is disabled"
+                "Swipe up on the notch header to close, or use its close button. Scrolling inside task columns never closes the notch. Swipe down on the closed notch to open it when **Open notch on hover** is disabled."
             )
             .multilineTextAlignment(.trailing)
             .foregroundStyle(.secondary)
@@ -327,7 +344,20 @@ struct GeneralSettings: View {
             Defaults.Toggle(key: .enableHaptics) {
                     Text("Enable haptic feedback")
             }
-            Toggle("Remember last tab", isOn: $coordinator.openLastTabByDefault)
+            Picker("Page shown on hover", selection: Binding(get: { coordinator.landingPage }, set: { coordinator.landingPage = $0 })) {
+                ForEach(NotchLandingPage.allCases) { page in Text(page.title).tag(page) }
+            }
+            Text("Choose what opens when you hover or open the notch. You can switch pages using the tabs. Dragging files still opens Shelf.")
+                .font(.caption).foregroundStyle(.secondary)
+            Slider(value: $coordinator.tasksMaximumHeight, in: 320...600, step: 20) {
+                HStack {
+                    Text("Maximum task board height")
+                    Spacer()
+                    Text("\(Int(coordinator.tasksMaximumHeight)) pt").foregroundStyle(.secondary)
+                }
+            }
+            Text("The task board grows with its cards up to this limit and the available screen space. Scroll inside each column for more tasks.")
+                .font(.caption).foregroundStyle(.secondary)
             if openNotchOnHover {
                 Slider(value: $minimumHoverDuration, in: 0...1, step: 0.1) {
                     HStack {
@@ -839,6 +869,21 @@ struct About: View {
     var body: some View {
         VStack {
             Form {
+                HStack(spacing: 14) {
+                    Image("HeyNotchAppIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 64, height: 64)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("HeyNotch")
+                            .font(.title2.weight(.semibold))
+                        Text("Your notch, your way.")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 6)
+
                 Section {
                     HStack {
                         Text("Release name")
@@ -930,9 +975,8 @@ struct Shelf: View {
                 Defaults.Toggle(key: .heyShelf) {
                     Text("Enable shelf")
                 }
-                Defaults.Toggle(key: .openShelfByDefault) {
-                    Text("Open shelf by default if items are present")
-                }
+                Text("Choose Shelf as your hover page in General → Notch behavior. Dragging files to the notch opens Shelf when it is enabled.")
+                    .font(.caption).foregroundStyle(.secondary)
                 Defaults.Toggle(key: .expandedDragDetection) {
                     Text("Expanded drag detection area")
                 }
@@ -1165,8 +1209,6 @@ struct Appearance: View {
     @Default(.customVisualizers) var customVisualizers
     @Default(.selectedVisualizer) var selectedVisualizer
 
-    let icons: [String] = ["logo2"]
-    @State private var selectedIcon: String = "logo2"
     @State private var selectedListVisualizer: CustomVisualizer? = nil
     @State private var isPresented: Bool = false
     @State private var name: String = ""
@@ -1418,8 +1460,6 @@ struct Advanced: View {
     
     @State private var customAccentColor: Color = .accentColor
     @State private var selectedPresetColor: PresetAccentColor? = nil
-    let icons: [String] = ["logo2"]
-    @State private var selectedIcon: String = "logo2"
     
     // macOS accent colors
     enum PresetAccentColor: String, CaseIterable, Identifiable {
@@ -1569,47 +1609,22 @@ struct Advanced: View {
             }
             
             Section {
-                HStack {
-                    ForEach(icons, id: \.self) { icon in
-                        Spacer()
-                        VStack {
-                            Image(icon)
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 20, style: .circular)
-                                        .strokeBorder(
-                                            icon == selectedIcon ? Color.effectiveAccent : .clear,
-                                            lineWidth: 2.5
-                                        )
-                                )
-
-                            Text("Default")
-                                .fontWeight(.medium)
-                                .font(.caption)
-                                .foregroundStyle(icon == selectedIcon ? .white : .secondary)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 3)
-                                .background(
-                                    Capsule()
-                                        .fill(icon == selectedIcon ? Color.effectiveAccent : .clear)
-                                )
-                        }
-                        .onTapGesture {
-                            withAnimation {
-                                selectedIcon = icon
-                            }
-                            NSApp.applicationIconImage = NSImage(named: icon)
-                        }
-                        Spacer()
+                HStack(spacing: 14) {
+                    Image("HeyNotchAppIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 80, height: 80)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("HeyNotch")
+                            .fontWeight(.medium)
+                        Text("Default app icon")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .disabled(true)
             } header: {
-                HStack {
-                    Text("App icon")
-                    customBadge(text: "Coming soon")
-                }
+                Text("App icon")
             }
             
             Section {
@@ -1725,6 +1740,7 @@ struct AccentCircleButton: View {
 struct Shortcuts: View {
     var body: some View {
         Form {
+            TextInsertionSettingsSection()
             Section {
                 KeyboardShortcuts.Recorder("Toggle Sneak Peek:", name: .toggleSneakPeek)
             } header: {

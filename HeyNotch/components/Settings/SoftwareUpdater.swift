@@ -13,6 +13,7 @@ final class CheckForUpdatesViewModel: ObservableObject {
 
     init(updater: SPUUpdater) {
         updater.publisher(for: \.canCheckForUpdates)
+            .map { AppUpdatePolicy.current.allowsUpdates && $0 }
             .assign(to: &$canCheckForUpdates)
     }
 }
@@ -29,8 +30,14 @@ struct CheckForUpdatesView: View {
     }
     
     var body: some View {
-        Button("Check for Updates…", action: updater.checkForUpdates)
-            .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+        Button("Check for Updates…") {
+            guard AppUpdatePolicy.current.allowsUpdates else { return }
+            updater.checkForUpdates()
+        }
+        .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+        .help(AppUpdatePolicy.current.allowsUpdates
+              ? "Check for a new version of HeyNotch."
+              : "Updates will be available when signed HeyNotch releases are ready.")
     }
 }
 
@@ -48,16 +55,21 @@ struct UpdaterSettingsView: View {
     
     var body: some View {
         Section {
-            Toggle("Automatically check for updates", isOn: $automaticallyChecksForUpdates)
-                .onChange(of: automaticallyChecksForUpdates) { _, newValue in
-                    updater.automaticallyChecksForUpdates = newValue
-                }
-            
-            Toggle("Automatically download updates", isOn: $automaticallyDownloadsUpdates)
-                .disabled(!automaticallyChecksForUpdates)
-                .onChange(of: automaticallyDownloadsUpdates) { _, newValue in
-                    updater.automaticallyDownloadsUpdates = newValue
-                }
+            if AppUpdatePolicy.current.allowsUpdates {
+                Toggle("Automatically check for updates", isOn: $automaticallyChecksForUpdates)
+                    .onChange(of: automaticallyChecksForUpdates) { _, newValue in
+                        updater.automaticallyChecksForUpdates = newValue
+                    }
+
+                Toggle("Automatically download updates", isOn: $automaticallyDownloadsUpdates)
+                    .disabled(!automaticallyChecksForUpdates)
+                    .onChange(of: automaticallyDownloadsUpdates) { _, newValue in
+                        updater.automaticallyDownloadsUpdates = newValue
+                    }
+            } else {
+                Text("Updates will be available when signed HeyNotch releases are ready.")
+                    .foregroundStyle(.secondary)
+            }
         } header: {
             HStack {
                 Text("Software updates")

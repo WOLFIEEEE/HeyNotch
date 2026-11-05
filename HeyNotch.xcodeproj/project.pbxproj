@@ -27,7 +27,6 @@
 		111BEA6F2ED166E20079DD4E /* MacroVisionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 111BEA6E2ED166E20079DD4E /* MacroVisionKit */; };
 		112B0EB82E30DD0F00562D6C /* MediaRemoteAdapterTestClient in Resources */ = {isa = PBXBuildFile; fileRef = 112B0EB52E30DD0F00562D6C /* MediaRemoteAdapterTestClient */; };
 		112B0EB92E30DD0F00562D6C /* mediaremote-adapter.pl in Resources */ = {isa = PBXBuildFile; fileRef = 112B0EB32E30DD0F00562D6C /* mediaremote-adapter.pl */; };
-		112B0EBB2E30DD5000562D6C /* MediaRemoteAdapter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 112B0EBA2E30DD5000562D6C /* MediaRemoteAdapter.framework */; };
 		112FB7352CCF16F70015238C /* NotchSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112FB7342CCF16F70015238C /* NotchSpaceManager.swift */; };
 		1132E5122E777B6E0068732D /* YouTubeMusicModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132E5102E777B6E0068732D /* YouTubeMusicModels.swift */; };
 		1132E5142E777B920068732D /* YouTubeMusicNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1132E5132E777B920068732D /* YouTubeMusicNetworking.swift */; };
@@ -69,7 +68,6 @@
 		11EFCD702E8E92D600D0B974 /* ShelfItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EFCD6F2E8E92D600D0B974 /* ShelfItemViewModel.swift */; };
 		11F747CE2EC75CEA00F841DB /* DragPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F747CD2EC75CEA00F841DB /* DragPreviewView.swift */; };
 		11F7485B2EC9AABA00F841DB /* HeyNotchXPCHelper.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = 11F7484F2EC9AABA00F841DB /* HeyNotchXPCHelper.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		11F748682EC9AC9600F841DB /* HeyNotchXPCHelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F748652EC9AC9600F841DB /* HeyNotchXPCHelperProtocol.swift */; };
 		11F748692EC9AC9600F841DB /* XPCHelperClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F748662EC9AC9600F841DB /* XPCHelperClient.swift */; };
 		11F748732EC9DA9300F841DB /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 11F748722EC9DA9300F841DB /* Lottie */; };
 		11F748822ECB07A400F841DB /* MusicControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F748812ECB07A400F841DB /* MusicControlButton.swift */; };
@@ -143,6 +141,11 @@
 		B1F747F92EC7E94000F841DB /* LottieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F747F82EC7E94000F841DB /* LottieView.swift */; };
 		B1FEB4992C7686630066EBBC /* PanGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FEB4982C7686630066EBBC /* PanGesture.swift */; };
 		F38DE6482D8243E7008B5C6D /* BatteryActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */; };
+		D00000000000000000000001 /* AppUpdatePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00000000000000000000003 /* AppUpdatePolicy.swift */; };
+		D00000000000000000000002 /* AppUpdatePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00000000000000000000003 /* AppUpdatePolicy.swift */; };
+		D10000000000000000000003 /* SystemInsertionEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10000000000000000000004 /* SystemInsertionEnvironment.swift */; };
+		D30000000000000000000012 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = D30000000000000000000011 /* WhisperKit */; };
+		D50000000000000000000006 /* AutomationAccessStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50000000000000000000005 /* AutomationAccessStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -237,7 +240,6 @@
 		11EFCD6F2E8E92D600D0B974 /* ShelfItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfItemViewModel.swift; sourceTree = "<group>"; };
 		11F747CD2EC75CEA00F841DB /* DragPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragPreviewView.swift; sourceTree = "<group>"; };
 		11F7484F2EC9AABA00F841DB /* HeyNotchXPCHelper.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = HeyNotchXPCHelper.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		11F748652EC9AC9600F841DB /* HeyNotchXPCHelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeyNotchXPCHelperProtocol.swift; sourceTree = "<group>"; };
 		11F748662EC9AC9600F841DB /* XPCHelperClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XPCHelperClient.swift; sourceTree = "<group>"; };
 		11F748812ECB07A400F841DB /* MusicControlButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicControlButton.swift; sourceTree = "<group>"; };
 		11F748832ECB27DC00F841DB /* MusicSlotConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicSlotConfigurationView.swift; sourceTree = "<group>"; };
@@ -309,6 +311,10 @@
 		B1F747F82EC7E94000F841DB /* LottieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieView.swift; sourceTree = "<group>"; };
 		B1FEB4982C7686630066EBBC /* PanGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanGesture.swift; sourceTree = "<group>"; };
 		F38DE6472D8243E2008B5C6D /* BatteryActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryActivityManager.swift; sourceTree = "<group>"; };
+		D00000000000000000000003 /* AppUpdatePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdatePolicy.swift; sourceTree = "<group>"; };
+		D00000000000000000000006 /* HeyNotchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeyNotchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D10000000000000000000004 /* SystemInsertionEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeyNotchXPCHelper/SystemInsertionEnvironment.swift; sourceTree = SOURCE_ROOT; };
+		D50000000000000000000005 /* AutomationAccessStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeyNotch/Automation/Runtime/AutomationAccessStore.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -324,6 +330,24 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		112FB72F2CCF12CC0015238C /* private */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = private; sourceTree = "<group>"; };
 		11F748502EC9AABA00F841DB /* HeyNotchXPCHelper */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (11F7485C2EC9AABA00F841DB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = HeyNotchXPCHelper; sourceTree = "<group>"; };
+		D00000000000000000000005 /* HeyNotchTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HeyNotchTests; sourceTree = "<group>"; };
+		D10000000000000000000001 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		D10000000000000000000002 /* Insertion */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Insertion; sourceTree = "<group>"; };
+		D20000000000000000000001 /* Processing Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Processing Core"; path = HeyNotch/Processing/Core; sourceTree = SOURCE_ROOT; };
+		D20000000000000000000002 /* Processing UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Processing UI"; path = HeyNotch/Processing/UI; sourceTree = SOURCE_ROOT; };
+		D30000000000000000000001 /* Voice Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Voice Core"; path = HeyNotch/Voice/Core; sourceTree = SOURCE_ROOT; };
+		D30000000000000000000002 /* Voice Runtime */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Voice Runtime"; path = HeyNotch/Voice/Runtime; sourceTree = SOURCE_ROOT; };
+		D30000000000000000000003 /* Voice UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Voice UI"; path = HeyNotch/Voice/UI; sourceTree = SOURCE_ROOT; };
+		D30000000000000000000004 /* Tasks Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Tasks Core"; path = HeyNotch/Tasks/Core; sourceTree = SOURCE_ROOT; };
+		D30000000000000000000005 /* Tasks Runtime */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Tasks Runtime"; path = HeyNotch/Tasks/Runtime; sourceTree = SOURCE_ROOT; };
+		D30000000000000000000006 /* Tasks UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Tasks UI"; path = HeyNotch/Tasks/UI; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000001 /* Meetings Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Meetings Core"; path = HeyNotch/Meetings/Core; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000002 /* Meetings Runtime */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Meetings Runtime"; path = HeyNotch/Meetings/Runtime; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000003 /* Meetings UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Meetings UI"; path = HeyNotch/Meetings/UI; sourceTree = SOURCE_ROOT; };
+		D50000000000000000000001 /* Automation Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Automation Core"; path = HeyNotch/Automation/Core; sourceTree = SOURCE_ROOT; };
+		D50000000000000000000002 /* Automation Runtime */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Automation Runtime"; path = HeyNotch/Automation/Runtime; sourceTree = SOURCE_ROOT; };
+		D50000000000000000000003 /* Automation UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Automation UI"; path = HeyNotch/Automation/UI; sourceTree = SOURCE_ROOT; };
+		D50000000000000000000004 /* Automation Transport */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = "Automation Transport"; path = HeyNotch/Automation/Transport; sourceTree = SOURCE_ROOT; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -338,10 +362,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D30000000000000000000012 /* WhisperKit in Frameworks */,
 				111BEA5F2ED07A340079DD4E /* MacroVisionKit in Frameworks */,
 				9A987A102C73CA8D005CA465 /* Collections in Frameworks */,
 				1194E8852EA57D23009C82D6 /* SkyLightWindow in Frameworks */,
-				112B0EBB2E30DD5000562D6C /* MediaRemoteAdapter.framework in Frameworks */,
 				14D0321D2C68F3350096E6A1 /* Sparkle in Frameworks */,
 				111BEA6F2ED166E20079DD4E /* MacroVisionKit in Frameworks */,
 				11F748732EC9DA9300F841DB /* Lottie in Frameworks */,
@@ -351,6 +375,13 @@
 				B19016222CC15B3D00E3F12E /* Defaults in Frameworks */,
 				111BE95D2ECD71E10079DD4E /* AsyncXPCConnection in Frameworks */,
 				B1628B922CC260C0003D8DF3 /* SwiftUIIntrospect in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D00000000000000000000009 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,7 +477,6 @@
 		11F748672EC9AC9600F841DB /* XPCHelperClient */ = {
 			isa = PBXGroup;
 			children = (
-				11F748652EC9AC9600F841DB /* HeyNotchXPCHelperProtocol.swift */,
 				11F748662EC9AC9600F841DB /* XPCHelperClient.swift */,
 			);
 			path = XPCHelperClient;
@@ -544,6 +574,9 @@
 				112B0EB62E30DD0F00562D6C /* mediaremote-adapter */,
 				14CEF4142C5CAED300855D72 /* HeyNotch */,
 				11F748502EC9AABA00F841DB /* HeyNotchXPCHelper */,
+				D00000000000000000000005 /* HeyNotchTests */,
+				D10000000000000000000001 /* Shared */,
+				D10000000000000000000004 /* SystemInsertionEnvironment.swift */,
 				14CEF4132C5CAED300855D72 /* Products */,
 				14D031EC2C689DB70096E6A1 /* Frameworks */,
 			);
@@ -554,6 +587,7 @@
 			children = (
 				14CEF4122C5CAED300855D72 /* HeyNotch.app */,
 				11F7484F2EC9AABA00F841DB /* HeyNotchXPCHelper.xpc */,
+				D00000000000000000000006 /* HeyNotchTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -561,6 +595,24 @@
 		14CEF4142C5CAED300855D72 /* HeyNotch */ = {
 			isa = PBXGroup;
 			children = (
+				D00000000000000000000004 /* Updates */,
+				D20000000000000000000001 /* Processing Core */,
+				D20000000000000000000002 /* Processing UI */,
+				D30000000000000000000001 /* Voice Core */,
+				D30000000000000000000002 /* Voice Runtime */,
+				D30000000000000000000003 /* Voice UI */,
+				D30000000000000000000004 /* Tasks Core */,
+				D30000000000000000000005 /* Tasks Runtime */,
+				D30000000000000000000006 /* Tasks UI */,
+				D40000000000000000000001 /* Meetings Core */,
+				D40000000000000000000002 /* Meetings Runtime */,
+				D40000000000000000000003 /* Meetings UI */,
+				D50000000000000000000001 /* Automation Core */,
+				D50000000000000000000002 /* Automation Runtime */,
+				D50000000000000000000003 /* Automation UI */,
+				D50000000000000000000004 /* Automation Transport */,
+
+				D10000000000000000000002 /* Insertion */,
 				11F748672EC9AC9600F841DB /* XPCHelperClient */,
 				116398942DF5D6B40052E6AF /* Providers */,
 				14288DE22C6E016F00B9F80C /* observers */,
@@ -757,6 +809,14 @@
 			path = Tips;
 			sourceTree = "<group>";
 		};
+		D00000000000000000000004 /* Updates */ = {
+			isa = PBXGroup;
+			children = (
+				D00000000000000000000003 /* AppUpdatePolicy.swift */,
+			);
+			path = Updates;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -773,7 +833,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				11F748502EC9AABA00F841DB /* HeyNotchXPCHelper */,
+				D10000000000000000000001 /* Shared */,				11F748502EC9AABA00F841DB /* HeyNotchXPCHelper */,
 			);
 			name = HeyNotchXPCHelper;
 			packageProductDependencies = (
@@ -791,6 +851,7 @@
 				14CEF4102C5CAED300855D72 /* Resources */,
 				B1ECFA062C6FE58A002ACD87 /* Embed Frameworks */,
 				11F748412EC8051E00F841DB /* Embed XPC Services */,
+				D50000000000000000000007 /* Embed MCP helper */,
 			);
 			buildRules = (
 			);
@@ -798,10 +859,28 @@
 				11F7485A2EC9AABA00F841DB /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				112FB72F2CCF12CC0015238C /* private */,
+				D10000000000000000000001 /* Shared */,				112FB72F2CCF12CC0015238C /* private */,
+				D10000000000000000000002 /* Insertion */,
+				D20000000000000000000001 /* Processing Core */,
+				D20000000000000000000002 /* Processing UI */,
+				D30000000000000000000001 /* Voice Core */,
+				D30000000000000000000002 /* Voice Runtime */,
+				D30000000000000000000003 /* Voice UI */,
+				D30000000000000000000004 /* Tasks Core */,
+				D30000000000000000000005 /* Tasks Runtime */,
+				D30000000000000000000006 /* Tasks UI */,
+				D40000000000000000000001 /* Meetings Core */,
+				D40000000000000000000002 /* Meetings Runtime */,
+				D40000000000000000000003 /* Meetings UI */,
+				D50000000000000000000001 /* Automation Core */,
+				D50000000000000000000002 /* Automation Runtime */,
+				D50000000000000000000003 /* Automation UI */,
+				D50000000000000000000004 /* Automation Transport */,
+
 			);
 			name = HeyNotch;
 			packageProductDependencies = (
+				D30000000000000000000011 /* WhisperKit */,
 				14D032192C68F32E0096E6A1 /* LaunchAtLogin */,
 				14D0321C2C68F3350096E6A1 /* Sparkle */,
 				B18654382C6F4990000B926A /* KeyboardShortcuts */,
@@ -819,6 +898,30 @@
 			productReference = 14CEF4122C5CAED300855D72 /* HeyNotch.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D00000000000000000000007 /* HeyNotchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0000000000000000000000B /* Build configuration list for PBXNativeTarget "HeyNotchTests" */;
+			buildPhases = (
+				D00000000000000000000008 /* Sources */,
+				D00000000000000000000009 /* Frameworks */,
+				D0000000000000000000000A /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			fileSystemSynchronizedGroups = (
+				D10000000000000000000001 /* Shared */,				D00000000000000000000005 /* HeyNotchTests */,
+				D20000000000000000000001 /* Processing Core */,
+				D30000000000000000000001 /* Voice Core */,
+				D30000000000000000000004 /* Tasks Core */,
+				D40000000000000000000001 /* Meetings Core */,
+				D50000000000000000000001 /* Automation Core */,
+				D50000000000000000000004 /* Automation Transport */,
+			);
+			name = HeyNotchTests;
+			productName = HeyNotchTests;
+			productReference = D00000000000000000000006 /* HeyNotchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -829,6 +932,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					D00000000000000000000007 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					11F7484E2EC9AABA00F841DB = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -848,6 +954,7 @@
 			);
 			mainGroup = 14CEF4092C5CAED200855D72;
 			packageReferences = (
+				D30000000000000000000010 /* argmax-oss-swift */,
 				14D032182C68F32E0096E6A1 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
 				14D0321B2C68F3350096E6A1 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				B18654372C6F4990000B926A /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
@@ -864,6 +971,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				D00000000000000000000007 /* HeyNotchTests */,
 				14CEF4112C5CAED300855D72 /* HeyNotch */,
 				11F7484E2EC9AABA00F841DB /* HeyNotchXPCHelper */,
 			);
@@ -891,7 +999,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D0000000000000000000000A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D50000000000000000000007 /* Embed MCP helper */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = "Embed MCP helper";
+			outputPaths = ("$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/heynotch-mcp");
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "bash \"$SRCROOT/scripts/build-mcp-helper.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		11F7484B2EC9AABA00F841DB /* Sources */ = {
@@ -905,6 +1035,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D00000000000000000000001 /* AppUpdatePolicy.swift in Sources */,
 				115C12EC2ED3D003009754CA /* OpenNotchHUD.swift in Sources */,
 				14C08BB92C8DE4B1000F8AA0 /* HeyCalendar.swift in Sources */,
 				5955950D2E900ED800C66711 /* ApplicationRelauncher.swift in Sources */,
@@ -999,7 +1130,6 @@
 				118D1FD12E98FF5F00A2FF63 /* SharingStateManager.swift in Sources */,
 				14D570C22C5EAFBF0011E668 /* EmptyState.swift in Sources */,
 				118EBE252E92DCCB00D54B5A /* AssociatedObject.swift in Sources */,
-				11F748682EC9AC9600F841DB /* HeyNotchXPCHelperProtocol.swift in Sources */,
 				11F748692EC9AC9600F841DB /* XPCHelperClient.swift in Sources */,
 				118EBE2D2E97165600D54B5A /* Bookmark.swift in Sources */,
 				B1FEB4992C7686630066EBBC /* PanGesture.swift in Sources */,
@@ -1023,6 +1153,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D00000000000000000000008 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D00000000000000000000002 /* AppUpdatePolicy.swift in Sources */,
+				D10000000000000000000003 /* SystemInsertionEnvironment.swift in Sources */,
+				D50000000000000000000006 /* AutomationAccessStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1042,14 +1182,14 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 271;
+				CURRENT_PROJECT_VERSION = 272;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HeyNotchXPCHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HeyNotchXPCHelper;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.7.3;
+				MARKETING_VERSION = 2.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.HeyNotchXPCHelper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1067,14 +1207,14 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 271;
+				CURRENT_PROJECT_VERSION = 272;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HeyNotchXPCHelper/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HeyNotchXPCHelper;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.7.3;
+				MARKETING_VERSION = 2.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.HeyNotchXPCHelper;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1221,13 +1361,13 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 271;
+				CURRENT_PROJECT_VERSION = 272;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"HeyNotch/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/mediaremote-adapter",
@@ -1240,16 +1380,16 @@
 				INFOPLIST_KEY_LSBackgroundOnly = NO;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "This app uses AppleEvents to control music";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app uses the calendar to display your calendar events";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "This app uses the calendar to display your calendar events";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to display a live camera view";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSRemindersUsageDescription = "This app uses Reminders to display your scheduled reminder in the calendar";
+				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "This app uses Reminders to display your scheduled reminder in the calendar";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.7.3;
+				MARKETING_VERSION = 2.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch;
 				PRODUCT_NAME = "HeyNotch";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1276,11 +1416,12 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 271;
+				CURRENT_PROJECT_VERSION = 272;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"HeyNotch/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1294,16 +1435,16 @@
 				INFOPLIST_KEY_LSBackgroundOnly = NO;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "This app uses AppleEvents to control music";
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "This app uses the calendar to display your calendar events";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "This app uses the calendar to display your calendar events";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera to display a live camera view";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSRemindersUsageDescription = "This app uses Reminders to display your scheduled reminder in the calendar";
+				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "This app uses Reminders to display your scheduled reminder in the calendar";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.7.3;
+				MARKETING_VERSION = 2.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch;
 				PRODUCT_NAME = "HeyNotch";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1314,6 +1455,38 @@
 					"$(inherited)",
 					"$(SDKROOT)/System/Library/PrivateFrameworks",
 				);
+			};
+			name = Release;
+		};
+		D0000000000000000000000C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D0000000000000000000000D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wolfieeee.heynotch.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -1343,6 +1516,15 @@
 			buildConfigurations = (
 				14CEF4222C5CAED400855D72 /* Debug */,
 				14CEF4232C5CAED400855D72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D0000000000000000000000B /* Build configuration list for PBXNativeTarget "HeyNotchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0000000000000000000000C /* Debug */,
+				D0000000000000000000000D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1438,6 +1620,7 @@
 				minimumVersion = 9.0.2;
 			};
 		};
+		D30000000000000000000010 /* argmax-oss-swift */ = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/argmaxinc/argmax-oss-swift.git"; requirement = {kind = exactVersion; version = 1.1.1; }; };
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1499,6 +1682,7 @@
 			package = B19016202CC15B3D00E3F12E /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
+		D30000000000000000000011 /* WhisperKit */ = {isa = XCSwiftPackageProductDependency; package = D30000000000000000000010 /* argmax-oss-swift */; productName = WhisperKit; };
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 14CEF40A2C5CAED200855D72 /* Project object */;

@@ -16,7 +16,11 @@ final class MediaChecker: Sendable {
     }
 
     func checkDeprecationStatus() async throws -> Bool {
-        try await Task.detached(priority: .userInitiated) {
+        // The bundled adapter was built for macOS 15. Keep the existing direct
+        // Apple Music/Spotify choices available on macOS 14 instead of launching it.
+        guard #available(macOS 15.0, *) else { return true }
+
+        return try await Task.detached(priority: .userInitiated) {
             guard let scriptURL = Bundle.main.url(forResource: "mediaremote-adapter", withExtension: "pl"),
                   let nowPlayingTestClientPath = Bundle.main.url(forResource: "MediaRemoteAdapterTestClient", withExtension: nil)?.path,
                   let frameworkPath = Bundle.main.privateFrameworksPath?.appending("/MediaRemoteAdapter.framework")

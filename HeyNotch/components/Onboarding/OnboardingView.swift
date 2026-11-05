@@ -106,8 +106,8 @@ struct OnboardingView: View {
                 PermissionRequestView(
                     icon: Image(systemName: "hand.raised.fill"),
                     title: "Enable Accessibility Access",
-                    description: "Accessibility access is required to replace system notifications with the HeyNotch HUD. This allows the app to intercept media and brightness events to display custom HUD overlays.",
-                    privacyNote: "Accessibility access is used only to improve media and brightness notifications. No data is collected or shared.",
+                    description: "Accessibility lets HeyNotch insert text into the field you choose and display custom media and brightness controls. You can enable text insertion in Settings → Shortcuts.",
+                    privacyNote: "Text insertion runs on your Mac. HeyNotch checks the destination before pasting and temporarily uses your clipboard. You can turn it off or remove this permission at any time.",
                     onAllow: {
                         Task {
                             await requestAccessibilityPermission()

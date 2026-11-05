@@ -1,0 +1,41 @@
+{
+  "retrievedOn": "2026-11-05",
+  "assets": [
+    {
+      "provider": "Claude (Anthropic)",
+      "file": "claude-spark-clay.svg",
+      "sourceURL": "https://www.anthropic.com/press-kit",
+      "resolvedURL": "https://www-cdn.anthropic.com/ae59ca4ca194dac9c9dc3bc78c5829468cb0e8af.zip",
+      "archiveEntry": "Anthropic media resources/Anthropic logos/Claude logos/3 Claude Spark/SVG/Claude Spark - Clay.svg",
+      "guidelinesURL": "https://www.anthropic.com/legal/trademark-guidelines",
+      "usage": "Unchanged Claude Spark – Clay; original color in both app appearances and on the light website.",
+      "sha256": "6d53db4be375e899c937c26cf16684a80d6e869b1928d72b37748bef2560e219"
+    },
+    {
+      "provider": "OpenAI",
+      "file": "openai-developers-header.svg",
+      "sourceURL": "https://developers.openai.com/",
+      "sourceElement": "Complete first SVG element, inside the header span data-site-visibility-include=\"chatgpt-docs\". Copied verbatim, including original viewBox, paths and currentColor fill.",
+      "sourcePageSHA256": "f7ff3c8089d6557a04bb1db38e4977a4ac545b687f102fe562973f1c0925069e",
+      "guidelinesURL": "https://openai.com/brand/",
+      "usage": "Unchanged header Blossom SVG. Website displays original currentColor as black. Native asset uses its monochrome template intent and explicit black/light or white/dark foreground, matching the source currentColor behavior.",
+      "sha256": "468ebe03b0504e3e40be53e6c1f4b5b80c00d94ea4ad07b913ae41073638ae90"
+    },
+    {
+      "provider": "OpenRouter",
+      "file": "openrouter-glyph-ink.svg",
+      "sourceURL": "https://openrouter.ai/brand/logos/transparent/glyph/svg/glyph-ink.svg",
+      "guidelinesURL": "https://openrouter.ai/brand/",
+      "usage": "Unchanged Ink glyph for light native appearance and the light website.",
+      "sha256": "91be6b8a91745f089bfe42b89a5cbcd4b666fca6473610f9a6c11a31bd7523bc"
+    },
+    {
+      "provider": "OpenRouter",
+      "file": "openrouter-glyph-cloud.svg",
+      "sourceURL": "https://openrouter.ai/brand/logos/transparent/glyph/svg/glyph-cloud.svg",
+      "guidelinesURL": "https://openrouter.ai/brand/",
+      "usage": "Unchanged Cloud glyph for dark native appearance; not used by the light website.",
+      "sha256": "385bbf00cd5718ad652fdfc05b4b4e7d0ea3a834cfd807e1133d3bee2b9a7c81"
+    }
+  ]
+}

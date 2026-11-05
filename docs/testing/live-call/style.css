@@ -1,0 +1,19 @@
+:root { color-scheme: light dark; font: 16px/1.55 system-ui, sans-serif; }
+body { margin: 0; background: Canvas; color: CanvasText; }
+main { max-width: 800px; margin: 40px auto; padding: 0 24px 40px; }
+.eyebrow { font-size: 13px; font-weight: 650; color: GrayText; }
+h1 { margin: 0 0 12px; font-size: 32px; letter-spacing: -.7px; }
+h2 { font-size: 18px; margin-top: 0; }
+section { padding: 20px; border: 1px solid GrayText; border-radius: 12px; margin: 24px 0; }
+blockquote { margin: 0 0 14px; font-size: 18px; }
+.buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+button { font: inherit; padding: 8px 16px; cursor: pointer; }
+button:disabled { cursor: default; }
+#status { font-weight: 600; min-height: 28px; }
+dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+dl div { padding: 12px 0; border-bottom: 1px solid GrayText; }
+dt { color: GrayText; font-size: 13px; }
+dd { margin: 0; font-variant-numeric: tabular-nums; }
+.note { font-size: 13px; color: GrayText; margin-top: 24px; }
+pre { font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; border: 1px solid GrayText; border-radius: 8px; }
+@media(max-width: 550px) { main { margin-top: 20px; } dl { grid-template-columns: 1fr; } }

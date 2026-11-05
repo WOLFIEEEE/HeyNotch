@@ -31,6 +31,8 @@ class HeyViewModel: NSObject, ObservableObject {
     @Published var edgeAutoOpenActive: Bool = false
     @Published var isHoveringCalendar: Bool = false
     @Published var isBatteryPopoverActive: Bool = false
+    @Published var isNotchMenuActive = false
+    private var sizedPage: NotchViews?
 
     @Published var screenUUID: String?
 
@@ -67,6 +69,13 @@ class HeyViewModel: NSObject, ObservableObject {
             .store(in: &cancellables)
         
         setupDetectorObserver()
+        coordinator.$currentView.dropFirst().receive(on: RunLoop.main)
+            .sink { [weak self] _ in self?.refreshOpenSize(resetHeight: true) }
+            .store(in: &cancellables)
+        TaskController.shared.objectWillChange
+            .debounce(for: .milliseconds(30), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.refreshOpenSize() }
+            .store(in: &cancellables)
     }
     
     private func setupDetectorObserver() {
@@ -183,18 +192,47 @@ class HeyViewModel: NSObject, ObservableObject {
             let baseY = frame.maxY - notchSize.height
             let baseX = frame.midX - notchSize.width / 2
             
-            return position.y >= baseY && position.x >= baseX && position.x <= baseX + notchSize.width
+            return position.y >= baseY && position.y <= frame.maxY && position.x >= baseX && position.x <= baseX + notchSize.width
         }
         
         return false
     }
 
-    func open() {
-        self.notchSize = openNotchSize
+    var panelSize: CGSize {
+        let screen = screenUUID.flatMap { NSScreen.screen(withUUID: $0) } ?? NSScreen.main
+        return CGSize(width: min(max(windowSize.width, notchSize.width), max(1, (screen?.frame.width ?? 816) - 16)),
+                      height: min(max(windowSize.height, notchSize.height + shadowPadding), screen?.frame.height ?? 900))
+    }
+
+    func refreshOpenSize(resetHeight: Bool = false) {
+        guard notchState == .open else { return }
+        let screen = screenUUID.flatMap { NSScreen.screen(withUUID: $0) } ?? NSScreen.main
+        let tallest = coordinator.currentView == .tasks ? TaskController.shared.tallestColumnCount : 0
+        var size = NotchLayoutPolicy.openSize(page: coordinator.currentView, tallestColumnCount: tallest,
+                                            screenWidth: Double(screen?.frame.width ?? 800),
+                                            availableHeight: Double(screen?.visibleFrame.height ?? 700),
+                                            maximumTaskHeight: coordinator.tasksMaximumHeight)
+        // Avoid shrinking away from the pointer after completing/moving a card.
+        // Reopening or switching pages recalculates the compact size afresh.
+        if !resetHeight, sizedPage == .tasks, coordinator.currentView == .tasks {
+            size.height = max(size.height, notchSize.height)
+        }
+        sizedPage = coordinator.currentView
+        if notchSize != size { notchSize = size }
+    }
+
+    func open(page: NotchViews? = nil) {
+        let page = page.map { $0 == .shelf && !Defaults[.heyShelf] ? NotchViews.tasks : $0 }
+        if notchState == .open {
+            if let page { coordinator.currentView = page; refreshOpenSize(resetHeight: true) }
+            return
+        }
+        coordinator.currentView = page ?? coordinator.pageForOpening()
         self.notchState = .open
+        refreshOpenSize(resetHeight: true)
         
         // Force music information update when notch is opened
-        MusicManager.shared.forceUpdate()
+        if coordinator.currentView == .home { MusicManager.shared.forceUpdate() }
     }
 
     func close() {
@@ -208,14 +246,7 @@ class HeyViewModel: NSObject, ObservableObject {
         self.isBatteryPopoverActive = false
         self.coordinator.sneakPeek.show = false
         self.edgeAutoOpenActive = false
-
-        // Set the current view to shelf if it contains files and the user enables openShelfByDefault
-        // Otherwise, if the user has not enabled openLastShelfByDefault, set the view to home
-    if !ShelfStateViewModel.shared.isEmpty && Defaults[.openShelfByDefault] {
-            coordinator.currentView = .shelf
-        } else if !coordinator.openLastTabByDefault {
-            coordinator.currentView = .home
-        }
+        sizedPage = nil
     }
 
     func closeHello() {

@@ -16,7 +16,7 @@ struct HeyHeader: View {
     var body: some View {
         HStack(spacing: 0) {
             HStack {
-                if (!tvm.isEmpty || coordinator.alwaysShowTabs) && Defaults[.heyShelf] {
+                if !tvm.isEmpty || coordinator.alwaysShowTabs || coordinator.currentView == .tasks {
                     TabSelectionView()
                 } else if vm.notchState == .open {
                     EmptyView()
@@ -38,6 +38,10 @@ struct HeyHeader: View {
 
             HStack(spacing: 4) {
                 if vm.notchState == .open {
+                    Button { vm.close() } label: {
+                        Image(systemName: "xmark").font(.system(size: 10, weight: .semibold))
+                            .frame(width: 24, height: 28).contentShape(Rectangle())
+                    }.buttonStyle(.plain).help("Close notch").accessibilityLabel("Close notch")
                     if isHUDType(coordinator.sneakPeek.type) && coordinator.sneakPeek.show && Defaults[.showOpenNotchHUD] {
                         OpenNotchHUD(type: $coordinator.sneakPeek.type, value: $coordinator.sneakPeek.value, icon: $coordinator.sneakPeek.icon)
                             .transition(.scale(scale: 0.8).combined(with: .opacity))

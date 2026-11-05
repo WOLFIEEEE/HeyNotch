@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>HeyNotch insertion test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font: 17px system-ui; max-width: 760px; margin: 48px auto; padding: 0 24px; }
+  label { display: block; margin: 24px 0 8px; font-weight: 600; }
+  textarea, input, [contenteditable] { box-sizing: border-box; width: 100%; font: inherit; border: 1px solid #999; border-radius: 8px; padding: 12px; }
+  textarea, [contenteditable] { min-height: 120px; }
+  :focus { outline: 3px solid #3478f6; }
+  output { display: block; margin-top: 24px; }
+</style>
+<h1>HeyNotch insertion test</h1>
+<p>This local page makes no network requests. Enable insertion in HeyNotch’s Shortcuts settings, focus a field, and press Control–Option–Command–V.</p>
+<label for="first">First text field</label>
+<textarea id="first" placeholder="Insert text here"></textarea>
+<label for="second">Second text field</label>
+<textarea id="second" placeholder="Use this to check a focus change"></textarea>
+<label for="rich">Rich text editor</label>
+<div id="rich" contenteditable="true" role="textbox" aria-multiline="true"></div>
+<label for="protected">Protected field (insertion must be refused)</label>
+<input id="protected" type="password" autocomplete="off" placeholder="Use dummy text only">
+<output id="events" aria-live="polite">Paste events: 0. No form can be submitted on this page.</output>
+<script>
+  let pastes = 0;
+  document.addEventListener('paste', () => {
+    document.querySelector('#events').textContent = `Paste events: ${++pastes}. No form can be submitted on this page.`;
+  });
+</script>
+</html>

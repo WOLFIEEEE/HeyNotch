@@ -50,7 +50,19 @@ struct ExpandedItem {
 class HeyViewCoordinator: ObservableObject {
     static let shared = HeyViewCoordinator()
 
-    @Published var currentView: NotchViews = .home
+    @Published var currentView: NotchViews = .tasks {
+        didSet { lastPageRaw = currentView.rawValue }
+    }
+    @AppStorage("notch.openPage") private var landingPageRaw = NotchLandingPage.tasks.rawValue
+    @AppStorage("notch.lastPage") private var lastPageRaw = NotchViews.tasks.rawValue
+    @AppStorage("notch.tasksMaximumHeight") var tasksMaximumHeight: Double = 500
+    var landingPage: NotchLandingPage {
+        get { NotchLandingPage(rawValue: landingPageRaw) ?? .tasks }
+        set { objectWillChange.send(); landingPageRaw = newValue.rawValue }
+    }
+    func pageForOpening() -> NotchViews {
+        landingPage.resolve(lastUsed: NotchViews(rawValue: lastPageRaw) ?? .tasks, shelfEnabled: Defaults[.heyShelf])
+    }
     @Published var helloAnimationRunning: Bool = false
     private var sneakPeekDispatch: DispatchWorkItem?
     private var expandingViewDispatch: DispatchWorkItem?
@@ -61,24 +73,7 @@ class HeyViewCoordinator: ObservableObject {
     @AppStorage("musicLiveActivityEnabled") var musicLiveActivityEnabled: Bool = true
     @AppStorage("currentMicStatus") var currentMicStatus: Bool = true
 
-    @AppStorage("alwaysShowTabs") var alwaysShowTabs: Bool = true {
-        didSet {
-            if !alwaysShowTabs {
-                openLastTabByDefault = false
-                if ShelfStateViewModel.shared.isEmpty || !Defaults[.openShelfByDefault] {
-                    currentView = .home
-                }
-            }
-        }
-    }
-
-    @AppStorage("openLastTabByDefault") var openLastTabByDefault: Bool = false {
-        didSet {
-            if openLastTabByDefault {
-                alwaysShowTabs = true
-            }
-        }
-    }
+    @AppStorage("alwaysShowTabs") var alwaysShowTabs: Bool = true
     
     @Default(.hudReplacement) var hudReplacement: Bool
     
@@ -102,6 +97,13 @@ class HeyViewCoordinator: ObservableObject {
     private var hudReplacementCancellable: AnyCancellable?
 
     private init() {
+        // Preserve an explicit legacy last-page choice. Otherwise Tasks is the
+        // personal fork's starting page; a populated Shelf no longer overrides it.
+        if UserDefaults.standard.object(forKey: "notch.openPage") == nil,
+           UserDefaults.standard.bool(forKey: "openLastTabByDefault") {
+            landingPageRaw = NotchLandingPage.lastUsed.rawValue
+        }
+        currentView = pageForOpening()
         // Perform migration from name-based to UUID-based storage
         if preferredScreenUUID == nil, let legacyName = legacyPreferredScreenName {
             // Try to find screen by name and migrate to UUID

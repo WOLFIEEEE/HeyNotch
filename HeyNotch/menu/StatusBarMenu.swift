@@ -11,7 +11,9 @@ class HeyStatusMenu: NSMenu {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "music.note", accessibilityDescription: "HeyNotch")
+            button.image = NSImage(named: "HeyNotchMenuBar")
+            button.image?.isTemplate = true
+            button.setAccessibilityLabel("HeyNotch")
             button.action = #selector(showMenu)
         }
         

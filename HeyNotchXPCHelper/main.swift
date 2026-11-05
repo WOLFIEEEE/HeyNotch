@@ -11,7 +11,15 @@ class ServiceDelegate: NSObject, NSXPCListenerDelegate {
     
     /// This method is where the NSXPCListener configures, accepts, and resumes a new incoming NSXPCConnection.
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-        
+        let appURL = Bundle.main.bundleURL.deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+        guard newConnection.effectiveUserIdentifier == geteuid(),
+              let requirement = XPCPeerTrust.requirement(for: appURL, identifier: XPCPeerTrust.appIdentifier) else {
+            newConnection.invalidate()
+            return false
+        }
+        // macOS enforces this against the peer's audit identity on incoming messages.
+        newConnection.setCodeSigningRequirement(requirement)
         // Configure the connection.
         // First, set the interface that the exported object implements.
         newConnection.exportedInterface = NSXPCInterface(with: (any HeyNotchXPCHelperProtocol).self)
@@ -19,6 +27,12 @@ class ServiceDelegate: NSObject, NSXPCListenerDelegate {
         // Next, set the object that the connection exports. All messages sent on the connection to this service will be sent to the exported object to handle. The connection retains the exported object.
         let exportedObject = HeyNotchXPCHelper()
         newConnection.exportedObject = exportedObject
+        newConnection.invalidationHandler = {
+            Task { @MainActor in exportedObject.insertionConnectionEnded() }
+        }
+        newConnection.interruptionHandler = {
+            Task { @MainActor in exportedObject.insertionConnectionEnded() }
+        }
         
         // Resuming the connection allows the system to deliver more incoming messages.
         newConnection.resume()

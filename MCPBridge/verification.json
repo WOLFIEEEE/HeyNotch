@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-05",
+  "swiftUnitTests": 14,
+  "swiftFailures": 0,
+  "nativeTransportIntegration": {
+    "passed": 10,
+    "checks": [
+      "initialize/lifecycle/catalog/authorized HTTP headers",
+      "UTF-8 and matching structured/text content",
+      "schema failure never forwarded",
+      "business errors and uncertain write outcome without retry",
+      "redirect not followed",
+      "bounded/invalid responses and denied credentials",
+      "credential redaction even in broker echo",
+      "cancel suppresses reply while committed operation can be reconciled",
+      "encoded HTTP body bound before transmission",
+      "EOF shutdown and no token on stderr"
+    ]
+  },
+  "officialClient": {
+    "officialPackage": "mcp",
+    "version": "1.30.0",
+    "protocolVersion": "2025-11-25",
+    "tools": 9,
+    "checks": [
+      "initialize",
+      "list_tools",
+      "get_context",
+      "Unicode arguments",
+      "synthetic write",
+      "schema error result",
+      "ping",
+      "stdio shutdown"
+    ]
+  },
+  "testedBinary": "arm64 Mach-O, release build before parent-app signing",
+  "binarySHA256": "0ad3ea6cf82192077b1bfe23685a5f8d9328cb3535891e30e48d76fc9dbc43b3",
+  "sourceSHA256": {
+    "Sources/HeyNotchMCPCore/BrokerTransport.swift": "1a2fd88e97ef92eff1969d2ff472381aef319498a97ecd16200404d2930b66c7",
+    "Sources/HeyNotchMCPCore/Connection.swift": "79f75941fd4f7a7435f57e222fb9fd85a12a8500e61f06220058b18437119eb8",
+    "Sources/HeyNotchMCPCore/JSONValue.swift": "241267e79c3c8703540b68a784be382242fbc56d0d9164b5b4c2768a80e297a3",
+    "Sources/HeyNotchMCPCore/MCPServer.swift": "b288a471737b965b6553afe63a20b76da3b30b3109d63cac8e6443f86914eb0d",
+    "Sources/HeyNotchMCPCore/ToolCatalog.swift": "d9eee660bf21933ad5f473dcdeae320eb1a4201d3459c04a52ebe33f147ce943",
+    "Sources/heynotch-mcp/main.swift": "b5f1bd98211abf32c5ab0fda84dd4c16569f55722017927719fa65028a575714"
+  },
+  "scope": "Synthetic loopback broker only; no real tasks, client configurations, app launches, or OS permission changes."
+}

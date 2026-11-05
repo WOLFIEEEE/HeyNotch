@@ -16,6 +16,7 @@ import SwiftUIIntrospect
 @MainActor
 struct ContentView: View {
     @EnvironmentObject var vm: HeyViewModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var webcamManager = WebcamManager.shared
 
     @ObservedObject var coordinator = HeyViewCoordinator.shared
@@ -91,7 +92,8 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
                 let mainLayout = NotchLayout()
-                    .frame(alignment: .top)
+                    .frame(width: vm.notchState == .open ? max(1, vm.notchSize.width - 24 - 2 * (Defaults[.cornerRadiusScaling] ? cornerRadiusInsets.opened.top : cornerRadiusInsets.opened.bottom)) : nil,
+                           height: vm.notchState == .open ? max(1, vm.notchSize.height - 12) : nil, alignment: .top)
                     .padding(
                         .horizontal,
                         vm.notchState == .open
@@ -118,13 +120,15 @@ struct ContentView: View {
                     )
                 
                 mainLayout
-                    .frame(height: vm.notchState == .open ? vm.notchSize.height : nil)
+                    .frame(width: vm.notchState == .open ? vm.notchSize.width : nil,
+                           height: vm.notchState == .open ? vm.notchSize.height : nil)
                     .conditionalModifier(true) { view in
                         let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
                         let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
                         
                         return view
-                            .animation(vm.notchState == .open ? openAnimation : closeAnimation, value: vm.notchState)
+                            .animation(reduceMotion ? nil : (vm.notchState == .open ? openAnimation : closeAnimation), value: vm.notchState)
+                            .animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: vm.notchSize)
                             .animation(.smooth, value: gestureProgress)
                     }
                     .contentShape(Rectangle())
@@ -136,14 +140,9 @@ struct ContentView: View {
                     }
                     .conditionalModifier(Defaults[.enableGestures]) { view in
                         view
-                            .panGesture(direction: .down) { translation, phase in
+                            .panGesture(direction: .down, isEnabled: vm.notchState == .closed,
+                                        activationThreshold: Defaults[.gestureSensitivity]) { translation, phase in
                                 handleDownGesture(translation: translation, phase: phase)
-                            }
-                    }
-                    .conditionalModifier(Defaults[.closeGestureEnabled] && Defaults[.enableGestures]) { view in
-                        view
-                            .panGesture(direction: .up) { translation, phase in
-                                handleUpGesture(translation: translation, phase: phase)
                             }
                     }
                     .onReceive(NotificationCenter.default.publisher(for: .sharingDidFinish)) { _ in
@@ -153,7 +152,7 @@ struct ContentView: View {
                                 try? await Task.sleep(for: .milliseconds(100))
                                 guard !Task.isCancelled else { return }
                                 await MainActor.run {
-                                    if self.vm.notchState == .open && !self.isHovering && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
+                                    if self.vm.notchState == .open && !self.vm.isMouseHovering() && !self.vm.isNotchMenuActive && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
                                         self.vm.close()
                                     }
                                 }
@@ -161,6 +160,7 @@ struct ContentView: View {
                         }
                     }
                     .onChange(of: vm.notchState) { _, newState in
+                        gestureProgress = .zero
                         if newState == .closed && isHovering {
                             withAnimation {
                                 isHovering = false
@@ -174,7 +174,7 @@ struct ContentView: View {
                                 try? await Task.sleep(for: .milliseconds(100))
                                 guard !Task.isCancelled else { return }
                                 await MainActor.run {
-                                    if !self.vm.isBatteryPopoverActive && !self.isHovering && self.vm.notchState == .open && !SharingStateManager.shared.preventNotchClose {
+                                    if !self.vm.isBatteryPopoverActive && !self.vm.isMouseHovering() && !self.vm.isNotchMenuActive && self.vm.notchState == .open && !SharingStateManager.shared.preventNotchClose {
                                         self.vm.close()
                                     }
                                 }
@@ -183,6 +183,10 @@ struct ContentView: View {
                     }
                     .sensoryFeedback(.alignment, trigger: haptics)
                     .contextMenu {
+                        Picker("Open on hover", selection: Binding(get: { coordinator.landingPage }, set: { coordinator.landingPage = $0 })) {
+                            ForEach(NotchLandingPage.allCases) { page in Text(page.title).tag(page) }
+                        }
+                        Divider()
                         Button("Settings") {
                             DispatchQueue.main.async {
                                 SettingsWindowController.shared.showWindow()
@@ -203,7 +207,7 @@ struct ContentView: View {
             }
         }
         .padding(.bottom, 8)
-        .frame(maxWidth: windowSize.width, maxHeight: windowSize.height, alignment: .top)
+        .frame(width: vm.panelSize.width, height: vm.panelSize.height, alignment: .top)
         .compositingGroup()
         .scaleEffect(
             x: gestureScale,
@@ -214,13 +218,20 @@ struct ContentView: View {
         .background(dragDetector)
         .preferredColorScheme(.dark)
         .environmentObject(vm)
+        .onChange(of: coordinator.tasksMaximumHeight) { _, _ in vm.refreshOpenSize(resetHeight: true) }
+        .onReceive(NotificationCenter.default.publisher(for: NSMenu.didBeginTrackingNotification)) { _ in
+            vm.isNotchMenuActive = true; hoverTask?.cancel()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSMenu.didEndTrackingNotification)) { _ in
+            vm.isNotchMenuActive = false
+            handleHover(vm.isMouseHovering())
+        }
         .onChange(of: vm.anyDropZoneTargeting) { _, isTargeted in
             anyDropDebounceTask?.cancel()
 
             if isTargeted {
                 if vm.notchState == .closed {
-                    coordinator.currentView = .shelf
-                    doOpen()
+                    doOpen(page: .shelf)
                 }
                 return
             }
@@ -235,7 +246,7 @@ struct ContentView: View {
                 }
 
                 vm.dropEvent = false
-                if !SharingStateManager.shared.preventNotchClose {
+                if !vm.isMouseHovering() && !vm.isNotchMenuActive && !SharingStateManager.shared.preventNotchClose {
                     vm.close()
                 }
             }
@@ -295,6 +306,11 @@ struct ContentView: View {
                        } else if vm.notchState == .open {
                            HeyHeader()
                                .frame(height: max(24, vm.effectiveClosedNotchHeight))
+                               .panGesture(direction: .up,
+                                           isEnabled: vm.notchState == .open && Defaults[.closeGestureEnabled] && Defaults[.enableGestures],
+                                           activationThreshold: Defaults[.gestureSensitivity]) { translation, phase in
+                                   handleUpGesture(translation: translation, phase: phase)
+                               }
                                .opacity(gestureProgress != 0 ? 1.0 - min(abs(gestureProgress) * 0.1, 0.3) : 1.0)
                        } else {
                            Rectangle().fill(.clear).frame(width: vm.closedNotchSize.width - 20, height: vm.effectiveClosedNotchHeight)
@@ -349,6 +365,8 @@ struct ContentView: View {
                         NotchHomeView(albumArtNamespace: albumArtNamespace)
                     case .shelf:
                         ShelfView()
+                    case .tasks:
+                        TasksNotchView()
                     }
                 }
                 .transition(
@@ -502,9 +520,9 @@ struct ContentView: View {
         }
     }
 
-    private func doOpen() {
+    private func doOpen(page: NotchViews? = nil) {
         withAnimation(animationSpring) {
-            vm.open()
+            vm.open(page: page)
         }
     }
 
@@ -549,7 +567,9 @@ struct ContentView: View {
                         self.isHovering = false
                     }
                     
-                    if self.vm.notchState == .open && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
+                    // Resizing and child scroll views can send transient hover
+                    // exits. Only leaving the actual notch bounds closes it.
+                    if self.vm.notchState == .open && !self.vm.isMouseHovering() && !self.vm.isNotchMenuActive && !self.vm.isBatteryPopoverActive && !SharingStateManager.shared.preventNotchClose {
                         self.vm.close()
                     }
                 }
@@ -560,18 +580,17 @@ struct ContentView: View {
     // MARK: - Gesture Handling
 
     private func handleDownGesture(translation: CGFloat, phase: NSEvent.Phase) {
-        guard vm.notchState == .closed else { return }
-
-        if phase == .ended {
+        if phase == .ended || phase == .cancelled {
             withAnimation(animationSpring) { gestureProgress = .zero }
             return
         }
+        guard vm.notchState == .closed else { return }
 
         withAnimation(animationSpring) {
             gestureProgress = (translation / Defaults[.gestureSensitivity]) * 20
         }
 
-        if translation > Defaults[.gestureSensitivity] {
+        if translation >= Defaults[.gestureSensitivity] {
             if Defaults[.enableHaptics] {
                 haptics.toggle()
             }
@@ -583,6 +602,10 @@ struct ContentView: View {
     }
 
     private func handleUpGesture(translation: CGFloat, phase: NSEvent.Phase) {
+        if phase == .ended || phase == .cancelled {
+            withAnimation(animationSpring) { gestureProgress = .zero }
+            return
+        }
         guard vm.notchState == .open && !vm.isHoveringCalendar else { return }
 
         withAnimation(animationSpring) {
@@ -595,7 +618,7 @@ struct ContentView: View {
             }
         }
 
-        if translation > Defaults[.gestureSensitivity] {
+        if translation >= Defaults[.gestureSensitivity] {
             withAnimation(animationSpring) {
                 isHovering = false
             }
@@ -633,6 +656,10 @@ struct FullScreenDropDelegate: DropDelegate {
 
 struct GeneralDropTargetDelegate: DropDelegate {
     @Binding var isTargeted: Bool
+
+    func validateDrop(info: DropInfo) -> Bool {
+        Defaults[.heyShelf] && !info.hasItemsConforming(to: ["com.wolfieeee.heynotch.task-move"])
+    }
 
     func dropEntered(info: DropInfo) {
         isTargeted = true

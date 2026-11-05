@@ -1,0 +1,52 @@
+{
+  "method": "Two generated 50-second channels; actual app buffer, decoder and export; no microphone or system capture",
+  "runs": [
+    {
+      "audioSeconds": 20,
+      "decodeSeconds": 0.6164950132369995,
+      "offset": 0,
+      "source": "Microphone",
+      "text": "Do not send the invoice yet. The total is $42.50."
+    },
+    {
+      "audioSeconds": 21,
+      "decodeSeconds": 0.590954065322876,
+      "offset": 19,
+      "source": "Microphone",
+      "text": "Do not send the invoice yet. The total is $42.50."
+    },
+    {
+      "audioSeconds": 11,
+      "decodeSeconds": 0.581800103187561,
+      "offset": 39,
+      "source": "Microphone",
+      "text": "Do not send the invoice yet. The total is $42.50."
+    },
+    {
+      "audioSeconds": 20,
+      "decodeSeconds": 0.6060270071029663,
+      "offset": 0,
+      "source": "Call audio",
+      "text": "Please schedule the design review for Friday at 10:30. Bring the updated notes."
+    },
+    {
+      "audioSeconds": 21,
+      "decodeSeconds": 0.6044900417327881,
+      "offset": 19,
+      "source": "Call audio",
+      "text": "Please schedule the design review for Friday at 10:30. Bring the updated notes."
+    },
+    {
+      "audioSeconds": 11,
+      "decodeSeconds": 0.6080670356750488,
+      "offset": 39,
+      "source": "Call audio",
+      "text": "Please schedule the design review for Friday at 10:30. Bring the updated notes."
+    }
+  ],
+  "transcript": "HeyNotch meeting transcript\n15 Jan 2027 at 1:30 PM\nCall audio: Synthetic call audio\nSource labels identify audio channels, not individual speakers.\n\n[00:00:00] Microphone: Do not send the invoice yet. The total is $42.50.\n\n[00:00:00] Call audio: Please schedule the design review for Friday at 10:30. Bring the updated notes.\n\n[00:00:19] Microphone: Do not send the invoice yet. The total is $42.50.\n\n[00:00:19] Call audio: Please schedule the design review for Friday at 10:30. Bring the updated notes.\n\n[00:00:39] Microphone: Do not send the invoice yet. The total is $42.50.\n\n[00:00:39] Call audio: Please schedule the design review for Friday at 10:30. Bring the updated notes.",
+  "verifiedOn": "2026-11-05",
+  "machine": "Apple M3 Pro, 18 GiB RAM, macOS 27.0.1",
+  "model": "Whisper Turbo compressed, pinned manifest",
+  "limits": "Generated audio only. Does not validate live microphone or ScreenCaptureKit permissions, app attribution, echo, real-call noise, or long-session timing. Export uses a fixed synthetic date."
+}

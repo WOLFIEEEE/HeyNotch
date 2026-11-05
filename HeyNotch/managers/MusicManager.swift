@@ -9,9 +9,9 @@ import Combine
 import Defaults
 import SwiftUI
 
-let defaultImage: NSImage = .init(
+let defaultImage: NSImage = NSImage(named: "HeyNotchSymbol") ?? .init(
     systemSymbolName: "heart.fill",
-    accessibilityDescription: "Album Art"
+    accessibilityDescription: "HeyNotch"
 )!
 
 class MusicManager: ObservableObject {

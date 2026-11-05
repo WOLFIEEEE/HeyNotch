@@ -11,6 +11,47 @@ import IOKit
 import CoreGraphics
 
 class HeyNotchXPCHelper: NSObject, HeyNotchXPCHelperProtocol {
+    @MainActor private static let insertionEngine = TextInsertionEngine(environment: SystemInsertionEnvironment())
+    @MainActor private var insertionOperation: UUID?
+
+    func captureInsertionTarget(_ request: Data, with reply: @escaping (Data) -> Void) {
+        Task { @MainActor in
+            let result: InsertionResponse
+            if request.count <= 8192, let decoded = try? JSONDecoder().decode(CaptureInsertionRequest.self, from: request) {
+                result = Self.insertionEngine.capture(decoded)
+                if result.status == .targetReady { insertionOperation = decoded.operationID }
+            } else {
+                result = InsertionResponse(operationID: UUID(), status: .invalidRequest)
+            }
+            reply((try? JSONEncoder().encode(result)) ?? Data())
+        }
+    }
+
+    func performTextInsertion(_ request: Data, with reply: @escaping (Data) -> Void) {
+        Task { @MainActor in
+            let result: InsertionResponse
+            if request.count <= 524_288, let decoded = try? JSONDecoder().decode(TextInsertionRequest.self, from: request) {
+                result = await Self.insertionEngine.insert(decoded)
+                if insertionOperation == decoded.operationID { insertionOperation = nil }
+            } else {
+                result = InsertionResponse(operationID: UUID(), status: .invalidRequest)
+            }
+            reply((try? JSONEncoder().encode(result)) ?? Data())
+        }
+    }
+
+    func cancelTextInsertion(_ operationID: String) {
+        guard let id = UUID(uuidString: operationID) else { return }
+        Task { @MainActor in
+            guard insertionOperation == id else { return }
+            Self.insertionEngine.cancel(id)
+        }
+    }
+
+    @MainActor func insertionConnectionEnded() {
+        if let insertionOperation { Self.insertionEngine.cancel(insertionOperation) }
+        insertionOperation = nil
+    }
     
     @objc func isAccessibilityAuthorized(with reply: @escaping (Bool) -> Void) {
         reply(AXIsProcessTrusted())
