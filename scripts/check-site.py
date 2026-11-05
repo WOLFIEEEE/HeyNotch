@@ -5,6 +5,9 @@ from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 import re
 import struct
+import hashlib
+import json
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1] / "dist"
 ORIGIN = "https://wolfieeee.github.io/HeyNotch/"
@@ -92,7 +95,16 @@ for tag, attribute, value in page.references:
 
 for attrs in page.images:
     file = artifact_path(attrs["src"])
-    assert png_size(file) == (int(attrs["width"]), int(attrs["height"])), f"Image dimensions mismatch: {file}"
+    if file.suffix == ".svg":
+        assert attrs.get("class") == "provider-logo", f"Unexpected SVG image: {file}"
+        assert attrs["alt"] == "", "Provider names already label their decorative logos"
+        assert (attrs["width"], attrs["height"]) == ("24", "24"), "Provider marks need stable display boxes"
+        svg = ET.fromstring(file.read_bytes())
+        assert svg.tag == "{http://www.w3.org/2000/svg}svg"
+        view_box = [float(value) for value in svg.attrib["viewBox"].split()]
+        assert len(view_box) == 4 and view_box[2] > 0 and view_box[3] > 0
+    else:
+        assert png_size(file) == (int(attrs["width"]), int(attrs["height"])), f"Image dimensions mismatch: {file}"
     assert urlsplit(attrs["src"]).query, f"Brand image needs a version: {file}"
 for attrs in page.icons:
     file = artifact_path(attrs["href"])
@@ -103,6 +115,14 @@ assert {(a["rel"], a["sizes"]) for a in page.icons} == {
     ("icon", "32x32"), ("icon", "192x192"), ("apple-touch-icon", "180x180")
 }
 assert sum(a.get("class") == "brand-wordmark" and a["alt"] == "HeyNotch" for a in page.images) == 2
+provider_images = [a for a in page.images if a.get("class") == "provider-logo"]
+provider_manifest = json.loads((ROOT / "assets/providers/provenance.json").read_text())
+assert len(provider_images) == len(provider_manifest["assets"]) == 3
+assert {artifact_path(a["src"]).name for a in provider_images} == {a["file"] for a in provider_manifest["assets"]}
+for entry in provider_manifest["assets"]:
+    file = ROOT / "assets/providers" / entry["file"]
+    assert hashlib.sha256(file.read_bytes()).hexdigest() == entry["sha256"], f"Official artwork changed: {file}"
+assert "<b aria-hidden=\"true\">◎</b>" not in html and "<b aria-hidden=\"true\">⇄</b>" not in html
 
 files = list(ROOT.rglob("*"))
 for file in files:
