@@ -16,11 +16,10 @@ struct HeyHeader: View {
     var body: some View {
         HStack(spacing: 0) {
             HStack {
-                if !tvm.isEmpty || coordinator.alwaysShowTabs || coordinator.currentView == .tasks {
-                    TabSelectionView()
-                } else if vm.notchState == .open {
-                    EmptyView()
-                }
+                TabSelectionView(presentation: NotchNavigationPolicy.presentation(
+                    alwaysShowTabs: coordinator.alwaysShowTabs,
+                    shelfEmpty: tvm.isEmpty,
+                    page: coordinator.currentView))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(vm.notchState == .closed ? 0 : 1)

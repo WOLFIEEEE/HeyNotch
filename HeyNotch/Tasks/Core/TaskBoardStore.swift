@@ -10,7 +10,8 @@ class TaskBoardStore: ObservableObject {
     }
     @Published private(set) var lists: [TaskList] = []
     @Published var draft: TaskDraft?
-    @Published private(set) var status = "Connect Apple Reminders to see your tasks."
+    @Published private(set) var operationMessage: String?
+    @Published private var hasLoadedTasks = false
     @Published private(set) var errorMessage: String?
     @Published private(set) var loading = false
     @Published private(set) var saving = false
@@ -32,6 +33,16 @@ class TaskBoardStore: ObservableObject {
         doingIDs = Set(defaults.stringArray(forKey: Self.doingPreferenceKey) ?? []).filter { !$0.isEmpty }
     }
     var selectedList: TaskList? { lists.first { $0.id == selectedListID && $0.writable } }
+    var listSummary: String {
+        guard hasLoadedTasks else { return "Connect Apple Reminders to see your tasks." }
+        guard let list = selectedList else { return "Choose a writable list in Tasks settings." }
+        let count = visibleTasks.filter { !$0.completed }.count
+        return "\(count) open \(count == 1 ? "task" : "tasks") in \(list.title)."
+    }
+    var status: String {
+        guard let operationMessage else { return listSummary }
+        return listSummary + "\n" + operationMessage
+    }
     var visibleTasks: [ReminderTask] {
         projection.visibleTasks(tasks, listID: selectedListID)
     }
@@ -72,7 +83,7 @@ class TaskBoardStore: ObservableObject {
             updateDoing(current.id, doing: column == .doing)
             if requiresReminderWrite { await refresh() }
             else { errorMessage = nil }
-            if errorMessage == nil { status = "Task moved to \(column.title)." }
+            if errorMessage == nil { operationMessage = "Task moved to \(column.title)." }
         } catch { report(error) }
     }
     func connect() async {
@@ -87,24 +98,47 @@ class TaskBoardStore: ObservableObject {
             let foundTasks = try await repository.fetch()
             guard refreshID == id else { return }
             lists = foundLists; tasks = foundTasks
+            hasLoadedTasks = true
+            reconcileUndo(with: foundTasks)
             // fetch() returns all reminders, not only the selected list. Never
             // clean local progress from a partial/failed/stale refresh.
             let active = Set(foundTasks.filter { !$0.completed }.map(\.id))
             let retained = doingIDs.intersection(active)
             if retained != doingIDs { doingIDs = retained; persistDoing() }
             errorMessage = nil
-            if selectedList == nil { status = "Choose a writable list in Tasks settings." }
-            else { status = "\(visibleTasks.filter { !$0.completed }.count) open tasks in \(selectedList!.title)." }
+            operationMessage = nil
         } catch { if refreshID == id { report(error) } }
     }
-    func makeDraft(_ text: String = "", now: Date = Date()) {
+    func makeDraftProposal(_ text: String = "", now: Date = Date()) -> TaskDraft {
         var value = TaskDateParser(now: now).parse(text)
         value.listID = selectedListID
         value.alarm = defaults.object(forKey: "tasks.notifyAtDue") as? Bool ?? true ? .atDue : .off
-        draft = value
+        return value
+    }
+    func editDraftProposal(_ task: ReminderTask) -> TaskDraft {
+        TaskDraft(reminderID: task.id, title: task.title, notes: task.notes, due: task.due, listID: task.listID, alarm: .keep)
+    }
+    @discardableResult
+    func makeDraft(_ text: String = "", now: Date = Date()) -> Bool {
+        stageDraft(makeDraftProposal(text, now: now))
     }
     func edit(_ task: ReminderTask) {
-        draft = TaskDraft(reminderID: task.id, title: task.title, notes: task.notes, due: task.due, listID: task.listID, alarm: .keep)
+        stageDraft(editDraftProposal(task))
+    }
+    /// A replacement approval applies only to the exact draft that was reviewed.
+    /// Recheck after the modal confirmation, which can run other main-actor work.
+    @discardableResult
+    func stageDraft(_ proposal: TaskDraft, replacing expected: TaskDraft? = nil) -> Bool {
+        guard !saving, draft == expected else { return false }
+        clearError()
+        draft = proposal
+        return true
+    }
+    @discardableResult
+    func discardDraft() -> Bool {
+        guard !saving else { return false }
+        draft = nil
+        return true
     }
     func saveDraft() async {
         guard !saving, let value = draft else { return }
@@ -123,7 +157,7 @@ class TaskBoardStore: ObservableObject {
             if value.reminderID == nil { lastSavedID = id; defaults.set(id, forKey: "tasks.lastSavedID") }
             await refresh()
             if draft?.id == value.id { draft = nil }
-            status = value.reminderID == nil ? "Task saved to Reminders. Undo is available below." : "Task updated."
+            operationMessage = value.reminderID == nil ? "Task saved to Reminders." : "Task updated."
         } catch { report(error) }
     }
     func setCompleted(_ task: ReminderTask, _ completed: Bool) async {
@@ -140,7 +174,7 @@ class TaskBoardStore: ObservableObject {
             updateDoing(current.id, doing: false)
             tasks.removeAll { $0.id == current.id }
             if lastSavedID == task.id { lastSavedID = nil; defaults.removeObject(forKey: "tasks.lastSavedID") }
-            await refresh(); status = "Task deleted."
+            await refresh(); operationMessage = "Task deleted."
         } catch { report(error) }
     }
     func undoLastSave() async {
@@ -150,14 +184,18 @@ class TaskBoardStore: ObservableObject {
         defer { endTaskOperation(id) }
         guard !Task.isCancelled else { return }
         do {
-            if !tasks.contains(where: { $0.id == id }) { await refresh() }
+            if !tasks.contains(where: { $0.id == id }) {
+                await refresh()
+                // A successful refresh may establish that Undo is already obsolete.
+                guard lastSavedID == id, errorMessage == nil else { return }
+            }
             _ = try mutableTask(id: id, requireCurrentList: false)
             try repository.delete(id)
             invalidateOlderRefresh()
             updateDoing(id, doing: false)
             tasks.removeAll { $0.id == id }
             lastSavedID = nil; defaults.removeObject(forKey: "tasks.lastSavedID")
-            await refresh(); status = "The last task created by HeyNotch was removed."
+            await refresh(); operationMessage = "The last task created by HeyNotch was removed."
         } catch { report(error) }
     }
     func report(_ error: Error) {
@@ -183,6 +221,8 @@ class TaskBoardStore: ObservableObject {
         let foundTasks = try await repository.fetch()
         if refreshID == id {
             lists = foundLists; tasks = foundTasks
+            hasLoadedTasks = true
+            reconcileUndo(with: foundTasks)
             let active = Set(foundTasks.filter { !$0.completed }.map(\.id))
             let retained = doingIDs.intersection(active)
             if retained != doingIDs { doingIDs = retained; persistDoing() }
@@ -213,6 +253,13 @@ class TaskBoardStore: ObservableObject {
         if before != doingIDs { persistDoing() }
     }
     private func persistDoing() { defaults.set(doingIDs.sorted(), forKey: Self.doingPreferenceKey) }
+    /// Call only with a successful, current snapshot of all reminder lists.
+    private func reconcileUndo(with foundTasks: [ReminderTask]) {
+        if let id = lastSavedID, !foundTasks.contains(where: { $0.id == id }) {
+            lastSavedID = nil
+            defaults.removeObject(forKey: "tasks.lastSavedID")
+        }
+    }
     private func invalidateOlderRefresh() {
         refreshID = UUID(); loading = false
     }

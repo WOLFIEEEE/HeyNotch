@@ -25,6 +25,12 @@ enum VoicePhase: String, Sendable {
     var isBusy: Bool { [.preparing, .recording, .transcribing, .processing, .inserting].contains(self) }
 }
 
+enum VoiceReviewPolicy {
+    static func canRetryCleanup(phase: VoicePhase, hasTranscript: Bool, pasteAttempted: Bool) -> Bool {
+        phase == .review && hasTranscript && !pasteAttempted
+    }
+}
+
 struct SpeechModelManifest: Codable, Identifiable, Sendable {
     struct File: Codable, Sendable {
         let path: String

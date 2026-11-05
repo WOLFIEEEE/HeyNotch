@@ -10,24 +10,45 @@ private final class SpeechDownloadProgress: NSObject, URLSessionDownloadDelegate
 }
 
 actor SpeechModelStore {
+    typealias Download = @Sendable (URL, @escaping @Sendable (Int64) -> Void) async throws -> URL
     static let shared = SpeechModelStore()
+    // Keep room for filesystem bookkeeping and loading caches while adding
+    // files. Already verified models do not need another download allocation.
+    static let downloadHeadroomBytes: Int64 = 256 * 1024 * 1024
     nonisolated let models: [SpeechModelManifest]
     private let root: URL
-    private let session: URLSession
+    private let availableCapacity: @Sendable (URL) throws -> Int64
+    private let download: Download
 
-    init(root: URL? = nil, manifests: [SpeechModelManifest]? = nil) {
+    init(root: URL? = nil, manifests: [SpeechModelManifest]? = nil,
+         availableCapacity: @escaping @Sendable (URL) throws -> Int64 = { url in
+             try url.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+                 .volumeAvailableCapacityForImportantUsage ?? 0
+         }, download: Download? = nil) {
         self.root = root ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("HeyNotch/SpeechModels", isDirectory: true)
+        self.availableCapacity = availableCapacity
         if let manifests { models = manifests.filter(\.valid) }
         else if let url = Bundle.main.url(forResource: "SpeechModels", withExtension: "json"),
                 let data = try? Data(contentsOf: url), let decoded = try? JSONDecoder().decode([SpeechModelManifest].self, from: data) {
             models = decoded.filter(\.valid)
         } else { models = [] }
-        let config = URLSessionConfiguration.ephemeral
-        config.timeoutIntervalForRequest = 45
-        config.timeoutIntervalForResource = 900
-        config.urlCache = nil
-        session = URLSession(configuration: config)
+        if let download { self.download = download }
+        else {
+            let config = URLSessionConfiguration.ephemeral
+            config.timeoutIntervalForRequest = 45
+            config.timeoutIntervalForResource = 900
+            config.urlCache = nil
+            let session = URLSession(configuration: config)
+            self.download = { url, progress in
+                let (temporary, response) = try await session.download(from: url, delegate: SpeechDownloadProgress(progress))
+                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                    try? FileManager.default.removeItem(at: temporary)
+                    throw VoiceError.modelDownload
+                }
+                return temporary
+            }
+        }
     }
 
     private func folder(_ model: SpeechModelManifest) -> URL {
@@ -43,26 +64,33 @@ actor SpeechModelStore {
         guard model.valid, models.contains(where: { $0.id == model.id }) else { throw VoiceError.modelIntegrity }
         let destination = folder(model)
         try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
-        let capacity = try destination.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]).volumeAvailableCapacityForImportantUsage ?? 0
-        if allowDownload && capacity < model.byteCount + 256 * 1024 * 1024 { throw VoiceError.insufficientDisk }
         var completed: Int64 = 0
+        var missing: [SpeechModelManifest.File] = []
         for file in model.files {
             try Task.checkCancellation()
             let path = destination.appendingPathComponent(file.path)
             if try verify(path, file) {
                 completed += file.size
                 progress(Double(completed) / Double(model.byteCount))
-                continue
-            }
-            guard allowDownload else { throw VoiceError.notReady }
+            } else { missing.append(file) }
+        }
+        guard !missing.isEmpty else { return destination }
+        guard allowDownload else { throw VoiceError.notReady }
+        try Task.checkCancellation()
+        let missingBytes = missing.reduce(Int64(0)) { $0 + $1.size }
+        guard try availableCapacity(destination) >= missingBytes + Self.downloadHeadroomBytes else {
+            throw VoiceError.insufficientDisk
+        }
+        for file in missing {
+            try Task.checkCancellation()
+            let path = destination.appendingPathComponent(file.path)
             try? FileManager.default.removeItem(at: path)
             let already = completed, total = model.byteCount
-            let delegate = SpeechDownloadProgress { bytes in progress(min(1, Double(already + min(bytes, file.size)) / Double(total))) }
             let temporary: URL
             do {
-                let (url, response) = try await session.download(from: file.url, delegate: delegate)
-                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else { throw VoiceError.modelDownload }
-                temporary = url
+                temporary = try await download(file.url) { bytes in
+                    progress(min(1, Double(already + min(bytes, file.size)) / Double(total)))
+                }
             } catch is CancellationError { throw CancellationError() }
             catch let error as URLError where error.code == .cancelled { throw CancellationError() }
             catch { throw VoiceError.modelDownload }

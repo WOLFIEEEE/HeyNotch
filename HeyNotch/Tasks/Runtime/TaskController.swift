@@ -34,16 +34,19 @@ final class TaskController: TaskBoardStore {
         do { selectedListID = try reminders.createHeyNotchList(); await refresh() }
         catch { report(error) }
     }
-    func newTask() { makeDraft(); presentDraft() }
-    func propose(_ text: String) { makeDraft(text); presentDraft() }
+    func newTask() { presentProposal(makeDraftProposal()) }
+    func propose(_ text: String) { presentProposal(makeDraftProposal(text)) }
     func proposeMeetingPassage(text: String, timestamp: String, source: String, sessionTitle: String) {
         guard let proposal = MeetingTaskDraft.make(text: text, timestamp: timestamp, source: source,
                                                    sessionTitle: sessionTitle, listID: selectedListID) else { return }
+        presentProposal(proposal)
+    }
+    private func presentProposal(_ proposal: TaskDraft) {
         showWindow()
         guard !saving else {
             let alert = NSAlert()
             alert.messageText = "A task is still being saved"
-            alert.informativeText = "Wait for the current save to finish, then choose this meeting passage again."
+            alert.informativeText = "Wait for the current save to finish before opening another task."
             alert.addButton(withTitle: "Keep current")
             alert.runModal()
             return
@@ -52,7 +55,7 @@ final class TaskController: TaskBoardStore {
         if previous != nil || editor != nil {
             let alert = NSAlert()
             alert.messageText = "Keep the current task draft?"
-            alert.informativeText = "A task editor is already open. Replacing it discards that unsaved draft. Nothing is saved to Reminders until you review the meeting task and choose Save task."
+            alert.informativeText = "A task editor is already open. Replacing it discards that unsaved draft. Nothing is saved to Reminders until you choose Save task."
             alert.addButton(withTitle: "Keep current")
             alert.addButton(withTitle: "Replace draft")
             alert.buttons[0].keyEquivalent = "\r"
@@ -63,10 +66,10 @@ final class TaskController: TaskBoardStore {
             }
         }
         // A pending save or AI suggestion may finish while the alert is open.
-        guard stageMeetingDraft(proposal, replacing: previous) else {
+        guard stageDraft(proposal, replacing: previous) else {
             let alert = NSAlert()
             alert.messageText = "The current task changed"
-            alert.informativeText = "Your current draft was kept. Choose the meeting passage again when you are ready to replace it."
+            alert.informativeText = "Your current draft was kept. Open the other task again when you are ready to replace it."
             alert.addButton(withTitle: "Keep current")
             alert.runModal()
             if draft != nil { presentDraft() }
@@ -75,7 +78,7 @@ final class TaskController: TaskBoardStore {
         cancelAssistance()
         presentDraft()
     }
-    override func edit(_ task: ReminderTask) { super.edit(task); presentDraft() }
+    override func edit(_ task: ReminderTask) { presentProposal(editDraftProposal(task)) }
     func editInWindow(_ task: ReminderTask) { edit(task) }
     func openTaskLink(_ operation: UUID) async {
         showWindow()
@@ -106,6 +109,10 @@ final class TaskController: TaskBoardStore {
     func closeDraft() {
         cancelAssistance()
         if let editor, let parent = editor.sheetParent { parent.endSheet(editor) }
+    }
+    func cancelDraft() {
+        guard discardDraft() else { return }
+        closeDraft()
     }
     func showWindow() {
         if window == nil {

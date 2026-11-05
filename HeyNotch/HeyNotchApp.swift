@@ -493,9 +493,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         do {
                             try await Task.sleep(for: .seconds(3))
                             await MainActor.run {
-                                if let viewModel, !viewModel.isMouseHovering(), !viewModel.isNotchMenuActive {
-                                    viewModel.close()
-                                }
+                                viewModel?.closeIfIdle()
                             }
                         } catch { }
                     }

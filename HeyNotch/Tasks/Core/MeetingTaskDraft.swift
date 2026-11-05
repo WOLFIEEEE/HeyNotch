@@ -60,9 +60,6 @@ extension TaskBoardStore {
     /// draft the user approved; a stale confirmation cannot erase later edits.
     @discardableResult
     func stageMeetingDraft(_ proposal: TaskDraft, replacing expected: TaskDraft? = nil) -> Bool {
-        guard !saving, draft == expected else { return false }
-        clearError()
-        draft = proposal
-        return true
+        stageDraft(proposal, replacing: expected)
     }
 }
