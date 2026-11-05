@@ -33,7 +33,7 @@ The inherited notch features remain available:
 
 ## Getting started
 
-The current release target is **HeyNotch 2.8.1 Preview 2**. [Download the notarized app ZIP](https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.1-preview.2/HeyNotch-2.8.1-273-notarized.zip), or view the [release and corresponding source](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.1-preview.2). The Preview 2 links become available after verification and publication. Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
+**HeyNotch 2.8.1 Preview 2 is available**, with fixes for unintended notch opening and unstable animations. [Download the notarized app ZIP](https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.1-preview.2/HeyNotch-2.8.1-273-notarized.zip), or view the [release and corresponding source](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.1-preview.2). Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
 
 The release provides the notarized app ZIP and **`HeyNotch-2.8.1-273-source.tar.gz`** as separate downloads on the same release page. The app ZIP includes license notices, `SOURCE_STATE.json`, and a direct link to its matching source archive; the source is not nested inside the app ZIP.
 
