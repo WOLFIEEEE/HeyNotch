@@ -33,7 +33,7 @@ The inherited notch features remain available:
 
 ## Getting started
 
-For **2.8.0 Preview 1**, use the notarized app ZIP attached to the [matching release](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.0-preview.1). Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
+**HeyNotch 2.8.0 Preview 1 is available.** [Download the notarized app ZIP](https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.0-preview.1/HeyNotch-2.8.0-272-notarized.zip), or view the [release and corresponding source](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.0-preview.1). Read the [installation and first-run guide](docs/INSTALL.md) for requirements, normal macOS security checks, setup, and preview limitations. Developer builds and a local `CANDIDATE.zip` are not a notarized public download.
 
 The release provides the notarized app ZIP and **`HeyNotch-2.8.0-272-source.tar.gz`** as separate downloads on the same release page. The app ZIP includes license notices, `SOURCE_STATE.json`, and a direct link to its matching source archive; the source is not nested inside the app ZIP.
 
@@ -103,9 +103,9 @@ The **Build and test** GitHub Actions workflow runs these checks, builds the Rel
 
 ## Updates
 
-Automatic and manual update checks are disabled at application startup, independently of saved Sparkle preferences. Settings explains that signed HeyNotch releases are not ready yet. The inherited signing key and release entries have been removed.
+Automatic updates and Sparkle update checks remain disabled, independently of saved Sparkle preferences. **Settings → About → Download updates** opens [HeyNotch releases](https://github.com/WOLFIEEEE/HeyNotch/releases). Install published previews manually using the [installation guide](docs/INSTALL.md). The inherited signing key and release entries have been removed.
 
-Enabling updates later requires an explicit build setting, this fork's validated signing key, the approved HeyNotch feed, and a tested signed release. The update-policy tests enforce the destination and configuration requirements.
+Enabling automatic updates later requires an explicit build setting, this fork's validated signing key, the approved HeyNotch feed, and a tested signed update flow. The update-policy tests enforce the destination and configuration requirements.
 
 ## Contributing
 

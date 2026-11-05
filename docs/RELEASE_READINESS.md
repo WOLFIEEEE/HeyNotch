@@ -2,7 +2,15 @@
 
 Audit date: 5 November 2026. Scope: the independent `WOLFIEEEE/HeyNotch` fork. This record separates a working development build, a distribution candidate, and product acceptance. It is not a production approval.
 
-## 2.8.0 Preview 1 distribution preparation
+## Published preview — 5 November 2026
+
+**[HeyNotch 2.8.0 Preview 1](https://github.com/WOLFIEEEE/HeyNotch/releases/tag/v2.8.0-preview.1) is publicly available**, with app/XPC version **2.8.0 (272)**. The release includes the [notarized app ZIP](https://github.com/WOLFIEEEE/HeyNotch/releases/download/v2.8.0-preview.1/HeyNotch-2.8.0-272-notarized.zip), exact corresponding-source archive, installation instructions, release notes, source manifest, and checksums. The release tag identifies source commit `e5b5607b2b163b92c632ae02fa6316696e5c96da`.
+
+Apple accepted the final submission `9f33d460-80d4-419d-92bb-43b155a79bbc`. The [release commit's CI run](https://github.com/WOLFIEEEE/HeyNotch/actions/runs/42032126783) passed **254 tests with zero failures and no skipped tests**, including the real MCP loopback/stdio integration test, and built the Release configuration successfully. Automatic updates remain disabled; Settings links to releases for manual downloads.
+
+This remains a preview. Real-call capture, native notification/Focus delivery, live provider requests, macOS 14/Intel runtime coverage, and the broader permission/device matrix still need acceptance work. The historical preparation and initial audit records below describe earlier builds, not current public download availability; publication does not close those remaining product gates.
+
+## Historical 2.8.0 Preview 1 distribution preparation
 
 The intended first HeyNotch prerelease is **v2.8.0-preview.1**, with numeric app/XPC version **2.8.0 (272)**. This advances the inherited 2.7.3 (271) identity while keeping preview status explicit on GitHub. Automatic updates remain disabled. See [release notes](releases/2.8.0-preview.1.md), [installation](INSTALL.md), and [publishing procedure](PUBLISHING.md).
 
