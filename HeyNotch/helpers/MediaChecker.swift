@@ -8,6 +8,9 @@
 import Foundation
 
 final class MediaChecker: Sendable {
+    private let probe = MediaProbeProcess()
+
+    func stop() { probe.stop() }
 
     enum MediaCheckerError: Error {
         case missingResources
@@ -20,52 +23,57 @@ final class MediaChecker: Sendable {
         // Apple Music/Spotify choices available on macOS 14 instead of launching it.
         guard #available(macOS 15.0, *) else { return true }
 
-        return try await Task.detached(priority: .userInitiated) {
-            guard let scriptURL = Bundle.main.url(forResource: "mediaremote-adapter", withExtension: "pl"),
-                  let nowPlayingTestClientPath = Bundle.main.url(forResource: "MediaRemoteAdapterTestClient", withExtension: nil)?.path,
-                  let frameworkPath = Bundle.main.privateFrameworksPath?.appending("/MediaRemoteAdapter.framework")
-            else {
-                throw MediaCheckerError.missingResources
-            }
-
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/perl")
-            process.arguments = [scriptURL.path, frameworkPath, nowPlayingTestClientPath, "test"]
-
-            do {
-                try process.run()
-            } catch {
-                throw MediaCheckerError.processExecutionFailed
-            }
-
-            // Timeout after 10 seconds
-            let didExit: Bool = try await withThrowingTaskGroup(of: Bool.self) { group in
-                group.addTask {
-                    process.waitUntilExit()
-                    return true
+        return try await withTaskCancellationHandler {
+            try await Task.detached(priority: .userInitiated) { [probe] in
+                guard let scriptURL = Bundle.main.url(forResource: "mediaremote-adapter", withExtension: "pl"),
+                      let nowPlayingTestClientPath = Bundle.main.url(forResource: "MediaRemoteAdapterTestClient", withExtension: nil)?.path,
+                      let frameworkPath = Bundle.main.privateFrameworksPath?.appending("/MediaRemoteAdapter.framework")
+                else {
+                    throw MediaCheckerError.missingResources
                 }
-                group.addTask {
-                    try await Task.sleep(for: .seconds(10))
-                    if process.isRunning {
-                        process.terminate()
-                    }
-                    return false // Timed out
+
+                let process: Process
+                do {
+                    process = try probe.start(
+                        executableURL: URL(fileURLWithPath: "/usr/bin/perl"),
+                        arguments: [scriptURL.path, frameworkPath, nowPlayingTestClientPath, "test"]
+                    )
+                } catch is CancellationError {
+                    throw CancellationError()
+                } catch {
+                    throw MediaCheckerError.processExecutionFailed
                 }
-                for try await exited in group {
-                    if exited {
-                        group.cancelAll()
+                defer { probe.finish(process) }
+
+                // Timeout after 10 seconds
+                let didExit: Bool = try await withThrowingTaskGroup(of: Bool.self) { group in
+                    group.addTask {
+                        process.waitUntilExit()
                         return true
                     }
+                    group.addTask {
+                        try await Task.sleep(for: .seconds(10))
+                        probe.stop()
+                        return false // Timed out
+                    }
+                    for try await exited in group {
+                        if exited {
+                            group.cancelAll()
+                            return true
+                        }
+                    }
+                    throw MediaCheckerError.timeout
                 }
-                throw MediaCheckerError.timeout
-            }
 
-            if !didExit {
-                throw MediaCheckerError.timeout
-            }
+                if !didExit {
+                    throw MediaCheckerError.timeout
+                }
 
-            let isDeprecated = process.terminationStatus == 1
-            return isDeprecated
-        }.value
+                let isDeprecated = process.terminationStatus == 1
+                return isDeprecated
+            }.value
+        } onCancel: {
+            probe.stop()
+        }
     }
 }

@@ -65,9 +65,7 @@ final class NowPlayingController: ObservableObject, MediaControllerProtocol {
     private let MRMediaRemoteSetShuffleModeFunction: @convention(c) (Int) -> Void
     private let MRMediaRemoteSetRepeatModeFunction: @convention(c) (Int) -> Void
 
-    private var process: Process?
-    private var pipeHandler: JSONLinesPipeHandler?
-    private var streamTask: Task<Void, Never>?
+    private var streamProcess: MediaStreamProcess?
 
     // MARK: - Initialization
     init?() {
@@ -97,26 +95,15 @@ final class NowPlayingController: ObservableObject, MediaControllerProtocol {
         MRMediaRemoteSetRepeatModeFunction = unsafeBitCast(
             MRMediaRemoteSetRepeatModePointer, to: (@convention(c) (Int) -> Void).self)
 
-        Task { await setupNowPlayingObserver() }
+        setupNowPlayingObserver()
     }
 
-    deinit {
-        streamTask?.cancel()
-        
-        if let pipeHandler = self.pipeHandler {
-            Task { await pipeHandler.close()
-            }
-        }
-        
-        if let process = self.process {
-            if process.isRunning {
-                process.terminate()
-                process.waitUntilExit()
-            }
-        }
+    deinit { stop() }
 
-        self.process = nil
-        self.pipeHandler = nil
+    /// Called explicitly on controller replacement and application shutdown.
+    func stop() {
+        streamProcess?.stop()
+        streamProcess = nil
     }
 
     // MARK: - Protocol Implementation
@@ -188,8 +175,7 @@ final class NowPlayingController: ObservableObject, MediaControllerProtocol {
     }
     
     // MARK: - Setup Methods
-    private func setupNowPlayingObserver() async {
-        let process = Process()
+    private func setupNowPlayingObserver() {
         guard
             let scriptURL = Bundle.main.url(forResource: "mediaremote-adapter", withExtension: "pl"),
             let frameworkPath = Bundle.main.privateFrameworksPath?.appending("/MediaRemoteAdapter.framework")
@@ -197,32 +183,19 @@ final class NowPlayingController: ObservableObject, MediaControllerProtocol {
             assertionFailure("Could not find mediaremote-adapter.pl script or framework path")
             return
         }
-        
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/perl")
-        process.arguments = [scriptURL.path, frameworkPath, "stream"]
-        
-        let pipeHandler = JSONLinesPipeHandler()
-        process.standardOutput = await pipeHandler.getPipe()
-        
-        self.process = process
-        self.pipeHandler = pipeHandler
 
         do {
-            try process.run()
-            streamTask = Task { [weak self] in
-                await self?.processJSONStream()
+            streamProcess = try MediaStreamProcess(
+                executableURL: URL(fileURLWithPath: "/usr/bin/perl"),
+                arguments: [scriptURL.path, frameworkPath, "stream"],
+                decoding: NowPlayingUpdate.self
+            ) { [weak self] update in
+                // Retain the controller only while handling this one update,
+                // never for the lifetime of the idle stream.
+                await self?.handleAdapterUpdate(update)
             }
         } catch {
             assertionFailure("Failed to launch mediaremote-adapter.pl: \(error)")
-        }
-    }
-
-    // MARK: - Async Stream Processing
-    private func processJSONStream() async {
-        guard let pipeHandler = self.pipeHandler else { return }
-        
-        await pipeHandler.readJSONLines(as: NowPlayingUpdate.self) { [weak self] update in
-            await self?.handleAdapterUpdate(update)
         }
     }
 
@@ -346,82 +319,4 @@ struct NowPlayingPayload: Codable {
     let parentApplicationBundleIdentifier: String?
     let bundleIdentifier: String?
     let volume: Double?
-}
-
-actor JSONLinesPipeHandler {
-    private let pipe: Pipe
-    private let fileHandle: FileHandle
-    private var buffer = ""
-    
-    init() {
-        self.pipe = Pipe()
-        self.fileHandle = pipe.fileHandleForReading
-    }
-    
-    func getPipe() -> Pipe {
-        return pipe
-    }
-    
-    func readJSONLines<T: Decodable>(as type: T.Type, onLine: @escaping (T) async -> Void) async {
-        do {
-            try await self.processLines(as: type) { decodedObject in
-                await onLine(decodedObject)
-            }
-        } catch {
-            print("Error processing JSON stream: \(error)")
-        }
-    }
-    
-    private func processLines<T: Decodable>(as type: T.Type, onLine: @escaping (T) async -> Void) async throws {
-        while true {
-            let data = try await readData()
-            guard !data.isEmpty else { break }
-            
-            if let chunk = String(data: data, encoding: .utf8) {
-                buffer.append(chunk)
-                
-                while let range = buffer.range(of: "\n") {
-                    let line = String(buffer[..<range.lowerBound])
-                    buffer = String(buffer[range.upperBound...])
-                    
-                    if !line.isEmpty {
-                        await processJSONLine(line, as: type, onLine: onLine)
-                    }
-                }
-            }
-        }
-    }
-    
-    private func processJSONLine<T: Decodable>(_ line: String, as type: T.Type, onLine: @escaping (T) async -> Void) async {
-        guard let data = line.data(using: .utf8) else {
-            return
-        }
-        do {
-            let decodedObject = try JSONDecoder().decode(T.self, from: data)
-            await onLine(decodedObject)
-        } catch {
-            // Ignore lines that can't be decoded
-        }
-    }
-    
-    private func readData() async throws -> Data {
-        return try await withCheckedThrowingContinuation { continuation in
-            
-            fileHandle.readabilityHandler = { handle in
-                let data = handle.availableData
-                handle.readabilityHandler = nil
-                continuation.resume(returning: data)
-            }
-        }
-    }
-    
-    func close() async {
-        do {
-            fileHandle.readabilityHandler = nil
-            try fileHandle.close()
-            try pipe.fileHandleForWriting.close()
-        } catch {
-            print("Error closing pipe handler: \(error)")
-        }
-    }
 }

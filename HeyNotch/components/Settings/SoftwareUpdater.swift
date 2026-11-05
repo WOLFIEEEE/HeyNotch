@@ -37,7 +37,7 @@ struct CheckForUpdatesView: View {
         .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
         .help(AppUpdatePolicy.current.allowsUpdates
               ? "Check for a new version of HeyNotch."
-              : "Updates will be available when signed HeyNotch releases are ready.")
+              : "Automatic updates are not enabled for this preview. Download new versions from HeyNotch releases.")
     }
 }
 
@@ -67,8 +67,9 @@ struct UpdaterSettingsView: View {
                         updater.automaticallyDownloadsUpdates = newValue
                     }
             } else {
-                Text("Updates will be available when signed HeyNotch releases are ready.")
+                Text("Automatic updates are not enabled for this preview. Download new versions from HeyNotch releases.")
                     .foregroundStyle(.secondary)
+                Link("Download updates", destination: URL(string: "https://github.com/WOLFIEEEE/HeyNotch/releases")!)
             }
         } header: {
             HStack {

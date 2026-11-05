@@ -41,6 +41,7 @@ jobs:
         run: xcodebuild -version
       - name: Build and run app logic tests
         run: |
+          swift build --package-path MCPBridge
           xcodebuild test \
             -project HeyNotch.xcodeproj \
             -scheme HeyNotch \

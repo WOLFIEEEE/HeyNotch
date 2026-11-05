@@ -20,6 +20,8 @@ class MusicManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var controllerCancellables = Set<AnyCancellable>()
     private var debounceIdleTask: Task<Void, Never>?
+    private var initializationTask: Task<Void, Never>?
+    private var isDestroyed = false
 
     // Helper to check if macOS has removed support for NowPlayingController
     public private(set) var isNowPlayingDeprecated: Bool = false
@@ -78,16 +80,19 @@ class MusicManager: ObservableObject {
             .store(in: &cancellables)
 
         // Initialize deprecation check asynchronously
-        Task { @MainActor in
+        let checker = mediaChecker
+        initializationTask = Task { @MainActor [weak self] in
+            let isDeprecated: Bool
             do {
-                self.isNowPlayingDeprecated = try await self.mediaChecker.checkDeprecationStatus()
-                print("Deprecation check completed: \(self.isNowPlayingDeprecated)")
+                isDeprecated = try await checker.checkDeprecationStatus()
+                print("Deprecation check completed: \(isDeprecated)")
             } catch {
                 print("Failed to check deprecation status: \(error). Defaulting to false.")
-                self.isNowPlayingDeprecated = false
+                isDeprecated = false
             }
-            
-            // Initialize the active controller after deprecation check
+            guard !Task.isCancelled, let self, !self.isDestroyed else { return }
+            self.isNowPlayingDeprecated = isDeprecated
+            self.initializationTask = nil
             self.setActiveControllerBasedOnPreference()
         }
     }
@@ -97,13 +102,19 @@ class MusicManager: ObservableObject {
     }
     
     public func destroy() {
+        isDestroyed = true
+        initializationTask?.cancel()
+        initializationTask = nil
+        mediaChecker.stop()
         debounceIdleTask?.cancel()
         cancellables.removeAll()
         controllerCancellables.removeAll()
         flipWorkItem?.cancel()
         transitionWorkItem?.cancel()
 
-        // Release active controller
+        // Explicit shutdown is required even if another async operation still
+        // retains the controller when the application exits.
+        (activeController as? NowPlayingController)?.stop()
         activeController = nil
     }
 
@@ -112,6 +123,7 @@ class MusicManager: ObservableObject {
         // Cleanup previous controller
         if activeController != nil {
             controllerCancellables.removeAll()
+            (activeController as? NowPlayingController)?.stop()
             activeController = nil
         }
 
@@ -149,6 +161,7 @@ class MusicManager: ObservableObject {
     }
 
     private func setActiveControllerBasedOnPreference() {
+        guard !isDestroyed else { return }
         let preferredType = Defaults[.mediaController]
         print("Preferred Media Controller: \(preferredType)")
 
