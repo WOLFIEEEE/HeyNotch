@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1] / "dist"
 ORIGIN = "https://wolfieeee.github.io/HeyNotch/"
-RELEASE_TAG = "v2.8.0-preview.1"
+RELEASE_TAG = "v2.8.1-preview.2"
 REPOSITORY = "https://github.com/WOLFIEEEE/HeyNotch"
 
 
@@ -102,9 +102,9 @@ assert release_links == {
     f"{REPOSITORY}/tree/{RELEASE_TAG}",
     f"{REPOSITORY}/blob/{RELEASE_TAG}/docs/INSTALL.md",
     f"{REPOSITORY}/releases/tag/{RELEASE_TAG}",
-    f"{REPOSITORY}/releases/download/{RELEASE_TAG}/HeyNotch-2.8.0-272-notarized.zip",
+    f"{REPOSITORY}/releases/download/{RELEASE_TAG}/HeyNotch-2.8.1-273-notarized.zip",
 }, "Download, guide, notes, and source must identify the same preview release"
-assert "Download for Mac" in html and "build 272" in html and "PREVIEW 1" in html
+assert "Download for Mac" in html and "build 273" in html and "PREVIEW 2" in html
 assert "Updates installed manually" in html and "macOS 14 or later" in html
 assert "public installer is not available" not in html and "public source may not include" not in html
 
