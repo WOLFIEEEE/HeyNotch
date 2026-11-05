@@ -19,13 +19,14 @@ sample tasks, silent music controls, an illustrative transcript and a preset age
 command. It does not connect to the app, call providers, capture media, store
 browser data or change Reminders.
 
-“Get HeyNotch” opens the **2.8.1 Preview 2** download dialog. It shows app version
-2.8.1 (build 273), macOS 14+, universal Apple silicon/Intel packaging, the remaining
+“Get HeyNotch” opens the **2.8.2 Preview 3** download dialog. It shows app version
+2.8.2 (build 274), macOS 14+, universal Apple silicon/Intel packaging, the remaining
 platform-testing limits, and manual updates. Installation, release notes, and
-source links target the matching `v2.8.1-preview.2` release instead of an older
-default-branch snapshot.
+source links target the matching `v2.8.2-preview.3` release instead of an older
+default-branch snapshot. The FAQ and download dialog describe this as a bugfix
+preview covering tasks, Shelf, navigation, and processing.
 
-The download target is the release asset `HeyNotch-2.8.1-273-notarized.zip` in
+The download target is the release asset `HeyNotch-2.8.2-274-notarized.zip` in
 `WOLFIEEEE/HeyNotch`. **Do not publish a website download change until the release
 tag, matching source, and verified notarized asset actually exist publicly.** A
 prepared URL or local candidate is not evidence that the public download is ready.
