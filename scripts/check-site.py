@@ -11,6 +11,8 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1] / "dist"
 ORIGIN = "https://wolfieeee.github.io/HeyNotch/"
+RELEASE_TAG = "v2.8.0-preview.1"
+REPOSITORY = "https://github.com/WOLFIEEEE/HeyNotch"
 
 
 class Page(HTMLParser):
@@ -92,6 +94,19 @@ for tag, attribute, value in page.references:
         assert value.startswith((ORIGIN, "https://github.com/WOLFIEEEE/HeyNotch")), value
         continue
     artifact_path(value)
+
+# These are local consistency checks. The release owner must separately verify
+# the public notarized asset and matching tag before publishing this website.
+release_links = {value for tag, attribute, value in page.references if value.startswith(REPOSITORY)}
+assert release_links == {
+    f"{REPOSITORY}/tree/{RELEASE_TAG}",
+    f"{REPOSITORY}/blob/{RELEASE_TAG}/docs/INSTALL.md",
+    f"{REPOSITORY}/releases/tag/{RELEASE_TAG}",
+    f"{REPOSITORY}/releases/download/{RELEASE_TAG}/HeyNotch-2.8.0-272-notarized.zip",
+}, "Download, guide, notes, and source must identify the same preview release"
+assert "Download for Mac" in html and "build 272" in html and "PREVIEW 1" in html
+assert "Updates installed manually" in html and "macOS 14 or later" in html
+assert "public installer is not available" not in html and "public source may not include" not in html
 
 for attrs in page.images:
     file = artifact_path(attrs["src"])
